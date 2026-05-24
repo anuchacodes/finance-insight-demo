@@ -2,25 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  ArrowLeftRight,
-  Banknote,
-  History,
-  LayoutDashboard,
-  Settings,
-  Star,
-} from "lucide-react";
 
+import { dashboardNavigation } from "@/components/layouts/navigation";
 import { cn } from "@/lib/utils";
-
-const navigation = [
-  { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/currencies", label: "Currencies", icon: Banknote },
-  { href: "/converter", label: "Converter", icon: ArrowLeftRight },
-  { href: "/historical-rates", label: "Historical Rates", icon: History },
-  { href: "/watchlist", label: "Watchlist", icon: Star },
-  { href: "/settings", label: "Settings", icon: Settings },
-];
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -37,7 +21,7 @@ export function Sidebar() {
       </div>
 
       <nav className="flex flex-1 flex-col gap-2">
-        {navigation.map((item) => {
+        {dashboardNavigation.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
 

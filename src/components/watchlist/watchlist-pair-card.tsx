@@ -43,7 +43,7 @@ export function WatchlistPairCard({ onRemove, pair }: WatchlistPairCardProps) {
       </div>
 
       <div className="mb-6">
-        <p className="text-4xl font-bold tracking-tight text-[#191c1e]">
+        <p className="break-words text-3xl font-bold tracking-tight text-[#191c1e] sm:text-4xl">
           {formatRate(pair.rate)}
         </p>
         <span
