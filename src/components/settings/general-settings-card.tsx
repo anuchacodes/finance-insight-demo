@@ -2,7 +2,6 @@
 
 import { Monitor, Moon, Sun } from "lucide-react";
 import type { ReactNode } from "react";
-import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -12,12 +11,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { SettingsOption } from "@/lib/mock/settings";
+import type {
+  AppSettings,
+  SettingsOption,
+  ThemeMode,
+} from "@/lib/adapters/settings";
+import type { CurrencyCode, CurrencyOption } from "@/lib/types/finance";
 import { cn } from "@/lib/utils";
 
 type GeneralSettingsCardProps = {
-  currencyOptions: SettingsOption[];
+  currencyOptions: CurrencyOption[];
+  onBaseCurrencyChange: (value: CurrencyCode) => void;
+  onRefreshIntervalChange: (value: string) => void;
+  onThemeModeChange: (value: ThemeMode) => void;
   refreshOptions: SettingsOption[];
+  settings: AppSettings;
 };
 
 const themeOptions = [
@@ -28,12 +36,12 @@ const themeOptions = [
 
 export function GeneralSettingsCard({
   currencyOptions,
+  onBaseCurrencyChange,
+  onRefreshIntervalChange,
+  onThemeModeChange,
   refreshOptions,
+  settings,
 }: GeneralSettingsCardProps) {
-  const [baseCurrency, setBaseCurrency] = useState("USD");
-  const [themeMode, setThemeMode] = useState("light");
-  const [refreshInterval, setRefreshInterval] = useState("60");
-
   return (
     <section className="overflow-hidden rounded-lg border border-[#c2c6d6] bg-white shadow-[0_1px_3px_rgba(15,23,42,0.05)]">
       <div className="border-b border-[#e0e3e5] p-5">
@@ -50,13 +58,16 @@ export function GeneralSettingsCard({
           description="Used for initial dashboard loads and conversions."
           title="Default Base Currency"
         >
-          <Select value={baseCurrency} onValueChange={setBaseCurrency}>
+          <Select
+            value={settings.baseCurrency}
+            onValueChange={onBaseCurrencyChange}
+          >
             <SelectTrigger className="h-11 w-full border-[#c2c6d6] bg-[#f7f9fb] shadow-none sm:w-64">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {currencyOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
+                <SelectItem key={option.code} value={option.code}>
                   {option.label}
                 </SelectItem>
               ))}
@@ -71,7 +82,7 @@ export function GeneralSettingsCard({
           <div className="inline-flex rounded-lg border border-[#c2c6d6] bg-[#f2f4f6] p-1">
             {themeOptions.map((option) => {
               const Icon = option.icon;
-              const isActive = option.value === themeMode;
+              const isActive = option.value === settings.themeMode;
 
               return (
                 <Button
@@ -83,7 +94,7 @@ export function GeneralSettingsCard({
                       : "bg-transparent text-[#424754] hover:bg-white/70",
                   )}
                   variant="ghost"
-                  onClick={() => setThemeMode(option.value)}
+                  onClick={() => onThemeModeChange(option.value as ThemeMode)}
                 >
                   <Icon className="size-4" />
                   {option.label}
@@ -97,7 +108,10 @@ export function GeneralSettingsCard({
           description="How often live rates are updated."
           title="Auto-refresh Interval"
         >
-          <Select value={refreshInterval} onValueChange={setRefreshInterval}>
+          <Select
+            value={settings.refreshInterval}
+            onValueChange={onRefreshIntervalChange}
+          >
             <SelectTrigger className="h-11 w-full border-[#c2c6d6] bg-[#f7f9fb] shadow-none sm:w-64">
               <SelectValue />
             </SelectTrigger>

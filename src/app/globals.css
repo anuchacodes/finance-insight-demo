@@ -129,3 +129,82 @@
     @apply font-sans;
   }
 }
+
+@layer utilities {
+  .dark body {
+    color-scheme: dark;
+  }
+
+  .dark [class*="bg-[#f7f9fb]"],
+  .dark [class*="bg-[#f2f4f6]"] {
+    background-color: #181d24;
+  }
+
+  .dark [class*="bg-white"],
+  .dark [class*="bg-white/"],
+  .dark [class*="hover:bg-white"]:hover,
+  .dark [class*="hover:bg-white/"]:hover {
+    background-color: #202632;
+  }
+
+  .dark [class*="bg-[#2d3133]"] {
+    background-color: #11161d;
+  }
+
+  .dark [class*="bg-[#3f465c]"],
+  .dark [class*="hover:bg-[#3f465c]"]:hover {
+    background-color: #263142;
+  }
+
+  .dark [class*="border-[#c2c6d6]"],
+  .dark [class*="border-[#e0e3e5]"] {
+    border-color: #334155;
+  }
+
+  .dark [class*="text-[#191c1e]"],
+  .dark [class*="text-[#eff1f3]"],
+  .dark [class*="text-white"] {
+    color: #f8fafc;
+  }
+
+  .dark [class*="text-[#424754]"],
+  .dark [class*="text-[#565e74]"],
+  .dark [class*="text-[#727785]"],
+  .dark [class*="text-[#d8dadc]"],
+  .dark [class*="text-[#bec6e0]"] {
+    color: #cbd5e1;
+  }
+
+  .dark [class*="text-[#0058be]"],
+  .dark [class*="text-[#2170e4]"],
+  .dark [class*="text-[#adc6ff]"] {
+    color: #93c5fd;
+  }
+
+  .dark [class*="bg-[#0058be]"],
+  .dark [class*="bg-primary"] {
+    background-color: #3b82f6;
+  }
+
+  .dark [class*="bg-[#e0e3e5]"],
+  .dark [class*="bg-[#d8dadc]"] {
+    background-color: #334155;
+  }
+
+  .dark input,
+  .dark button,
+  .dark [role="combobox"],
+  .dark [data-slot="select-content"],
+  .dark [data-slot="button"] {
+    border-color: #334155;
+  }
+
+  .dark input {
+    background-color: #202632;
+    color: #f8fafc;
+  }
+
+  .dark table tr:hover {
+    background-color: #1e293b;
+  }
+}

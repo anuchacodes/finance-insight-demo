@@ -6,6 +6,7 @@ import { getSingleRate } from "@/services/frankfurter-service";
 
 type UseSingleRateOptions = {
   enabled?: boolean;
+  refetchInterval?: false | number;
 };
 
 export function useSingleRate(
@@ -17,5 +18,6 @@ export function useSingleRate(
     enabled: options.enabled ?? Boolean(base && quote),
     queryFn: () => getSingleRate(base, quote),
     queryKey: queryKeys.exchangeRates.single(base, quote),
+    refetchInterval: options.refetchInterval,
   });
 }

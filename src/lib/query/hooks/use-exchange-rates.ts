@@ -6,9 +6,19 @@ import {
   type LatestRatesParams,
 } from "@/services/frankfurter-service";
 
-export function useLatestRates(params: LatestRatesParams = {}) {
+type UseLatestRatesOptions = {
+  enabled?: boolean;
+  refetchInterval?: false | number;
+};
+
+export function useLatestRates(
+  params: LatestRatesParams = {},
+  options: UseLatestRatesOptions = {},
+) {
   return useQuery({
+    enabled: options.enabled ?? true,
     queryFn: () => getLatestRates(params),
     queryKey: queryKeys.exchangeRates.latest(params),
+    refetchInterval: options.refetchInterval,
   });
 }

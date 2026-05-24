@@ -1,17 +1,18 @@
-import { Star, TrendingDown, TrendingUp } from "lucide-react";
+import { Trash2, TrendingDown, TrendingUp } from "lucide-react";
 
 import { WatchlistSparkline } from "@/components/watchlist/watchlist-sparkline";
 import { Button } from "@/components/ui/button";
 import { formatRate } from "@/lib/formatters/currency";
 import { formatPercentage } from "@/lib/formatters/percentage";
-import type { WatchlistPair } from "@/lib/mock/watchlist";
+import type { WatchlistPair } from "@/lib/adapters/watchlist";
 import { cn } from "@/lib/utils";
 
 type WatchlistPairCardProps = {
+  onRemove: () => void;
   pair: WatchlistPair;
 };
 
-export function WatchlistPairCard({ pair }: WatchlistPairCardProps) {
+export function WatchlistPairCard({ onRemove, pair }: WatchlistPairCardProps) {
   const isDown = pair.direction === "down";
   const TrendIcon = isDown ? TrendingDown : TrendingUp;
 
@@ -22,8 +23,9 @@ export function WatchlistPairCard({ pair }: WatchlistPairCardProps) {
         className="absolute right-4 top-4 text-[#0058be] hover:text-[#727785]"
         size="icon-sm"
         variant="ghost"
+        onClick={onRemove}
       >
-        <Star className="size-5" />
+        <Trash2 className="size-4" />
       </Button>
 
       <div className="mb-6 flex items-start gap-3 pr-9">

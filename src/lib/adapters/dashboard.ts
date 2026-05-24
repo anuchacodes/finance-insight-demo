@@ -73,6 +73,13 @@ export function getPreviousRateDate(date: string) {
   return previousDate.toISOString().slice(0, 10);
 }
 
+export function getPreviousRateLookbackStartDate(date: string) {
+  const previousDate = new Date(`${date}T00:00:00`);
+  previousDate.setDate(previousDate.getDate() - 7);
+
+  return previousDate.toISOString().slice(0, 10);
+}
+
 export function toCurrencyOptions(currencies: FrankfurterCurrency[] = []) {
   return currencies.map<CurrencyOption>((currency) => ({
     code: currency.iso_code,
@@ -160,7 +167,7 @@ export function toOverviewMetrics(params: {
       value: updatedDate ? formatDateLabel(updatedDate) : "No data",
     },
     {
-      description: "Average daily move",
+      description: "Average move across tracked pairs",
       icon: "trend",
       id: "trend",
       label: "Market Trend",

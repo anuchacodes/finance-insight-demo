@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import {
   getHistoricalRangeStartDate,
+  getPreviousRateLookbackStartDate,
   getPreviousRateDate,
   toConverterDefaults,
   toCurrencyNameMap,
@@ -34,14 +35,18 @@ import { useSingleRate } from "@/lib/query/hooks/use-converter";
 import { useCurrencies } from "@/lib/query/hooks/use-currencies";
 import { useLatestRates } from "@/lib/query/hooks/use-exchange-rates";
 import { useHistoricalRates } from "@/lib/query/hooks/use-historical-rates";
+import {
+  getRefreshIntervalMs,
+  useAppSettings,
+} from "@/lib/settings/app-settings";
 import type {
   CurrencyCode,
   CurrencyOption,
   HistoricalRange,
 } from "@/lib/types/finance";
+import { useWatchlistQuotes } from "@/lib/watchlist/watchlist-store";
 import { useUiStateStore } from "@/store/ui-state-store";
 
-const defaultBaseCurrency: CurrencyCode = "USD";
 const defaultConversionAmount = 1000;
 const dashboardQuoteUniverse: CurrencyCode[] = [
   "EUR",
@@ -51,17 +56,20 @@ const dashboardQuoteUniverse: CurrencyCode[] = [
   "AUD",
   "CAD",
 ];
-const dashboardWatchlistQuotes: CurrencyCode[] = ["EUR", "GBP", "JPY"];
 
 export function DashboardHomeClient() {
-  const [baseCurrency, setBaseCurrency] =
-    useState<CurrencyCode>(defaultBaseCurrency);
+  const appSettings = useAppSettings();
+  const watchlistQuotes = useWatchlistQuotes();
+  const refreshInterval = getRefreshIntervalMs(appSettings);
+  const [baseCurrencyOverride, setBaseCurrencyOverride] =
+    useState<CurrencyCode | null>(null);
+  const baseCurrency = baseCurrencyOverride ?? appSettings.baseCurrency;
   const [historicalRange, setHistoricalRange] =
     useState<HistoricalRange>("1M");
-  const [converterPair, setConverterPair] = useState({
-    from: defaultBaseCurrency,
-    to: "EUR",
-  });
+  const [converterPairOverride, setConverterPairOverride] = useState<{
+    from: CurrencyCode;
+    to: CurrencyCode;
+  } | null>(null);
   const [converterAmount, setConverterAmount] = useState(defaultConversionAmount);
   const setEmpty = useUiStateStore((state) => state.setEmpty);
   const setError = useUiStateStore((state) => state.setError);
@@ -69,13 +77,19 @@ export function DashboardHomeClient() {
 
   const currenciesQuery = useCurrencies();
   const activeQuotes = useMemo(
-    () => dashboardQuoteUniverse.filter((quote) => quote !== baseCurrency),
-    [baseCurrency],
+    () =>
+      Array.from(new Set([...dashboardQuoteUniverse, ...watchlistQuotes])).filter(
+        (quote) => quote !== baseCurrency,
+      ),
+    [baseCurrency, watchlistQuotes],
   );
-  const latestRatesQuery = useLatestRates({
-    base: baseCurrency,
-    quotes: activeQuotes,
-  });
+  const latestRatesQuery = useLatestRates(
+    {
+      base: baseCurrency,
+      quotes: activeQuotes,
+    },
+    { refetchInterval: refreshInterval },
+  );
 
   const currencyOptions = useMemo(
     () => toCurrencyOptions(currenciesQuery.data),
@@ -91,6 +105,10 @@ export function DashboardHomeClient() {
   );
 
   const primaryQuote = latestRates[0]?.quote ?? "";
+  const converterPair = converterPairOverride ?? {
+    from: baseCurrency,
+    to: primaryQuote || activeQuotes[0] || baseCurrency,
+  };
   const selectedPairRate = latestRates.find((rate) => rate.quote === primaryQuote);
   const converterFallbackRate = useMemo(() => {
     if (converterPair.from === baseCurrency) {
@@ -116,25 +134,29 @@ export function DashboardHomeClient() {
   }, [baseCurrency, converterPair.from, converterPair.to, latestRates]);
   const latestDate = latestRates[0]?.date;
   const previousRateDate = latestDate ? getPreviousRateDate(latestDate) : "";
+  const previousRateStartDate = latestDate
+    ? getPreviousRateLookbackStartDate(latestDate)
+    : "";
 
   const previousRatesParams = useMemo(
     () => ({
       base: baseCurrency,
-      from: previousRateDate,
+      from: previousRateStartDate,
       quotes: latestRates.map((rate) => rate.quote),
       to: previousRateDate,
     }),
-    [baseCurrency, latestRates, previousRateDate],
+    [baseCurrency, latestRates, previousRateDate, previousRateStartDate],
   );
 
   const previousRatesQuery = useHistoricalRates(previousRatesParams, {
-    enabled: Boolean(previousRateDate && latestRates.length),
+    enabled: Boolean(previousRateStartDate && previousRateDate && latestRates.length),
   });
 
   const singleRateQuery = useSingleRate(converterPair.from, converterPair.to, {
     enabled: Boolean(
       converterPair.from && converterPair.to && converterPair.from !== converterPair.to,
     ),
+    refetchInterval: refreshInterval,
   });
 
   const historicalParams = useMemo(
@@ -153,7 +175,8 @@ export function DashboardHomeClient() {
   const isLoading =
     currenciesQuery.isLoading ||
     latestRatesQuery.isLoading ||
-    (Boolean(previousRateDate && latestRates.length) && previousRatesQuery.isLoading) ||
+    (Boolean(previousRateStartDate && previousRateDate && latestRates.length) &&
+      previousRatesQuery.isLoading) ||
     (Boolean(primaryQuote) && historicalRatesQuery.isLoading);
   const error =
     currenciesQuery.error ??
@@ -192,8 +215,8 @@ export function DashboardHomeClient() {
   }, [error, isEmpty, isLoading, setEmpty, setError, setLoading]);
 
   const handleBaseCurrencyChange = useCallback((nextBase: CurrencyCode) => {
-    setBaseCurrency(nextBase);
-    setConverterPair({
+    setBaseCurrencyOverride(nextBase);
+    setConverterPairOverride({
       from: nextBase,
       to: dashboardQuoteUniverse.find((quote) => quote !== nextBase) ?? nextBase,
     });
@@ -201,8 +224,11 @@ export function DashboardHomeClient() {
 
   const handleConverterPairChange = useCallback(
     (pair: { from: CurrencyCode; to: CurrencyCode }) => {
-      setConverterPair((currentPair) => {
-        if (currentPair.from === pair.from && currentPair.to === pair.to) {
+      setConverterPairOverride((currentPair) => {
+        if (
+          currentPair?.from === pair.from &&
+          currentPair?.to === pair.to
+        ) {
           return currentPair;
         }
 
@@ -256,7 +282,7 @@ export function DashboardHomeClient() {
     latestRates,
     currencyNames,
     rateChanges,
-    dashboardWatchlistQuotes.filter((quote) => quote !== baseCurrency),
+    watchlistQuotes.filter((quote) => quote !== baseCurrency).slice(0, 3),
   );
   const converterDefaults = toConverterDefaults({
     amount: converterAmount,
