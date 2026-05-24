@@ -94,11 +94,11 @@ export function ConverterFormCard({
 
       <hr className="my-8 border-[#e0e3e5]" />
 
-      <div className="flex flex-col items-center justify-center py-4 text-center">
+      <div className="flex min-w-0 flex-col items-center justify-center py-4 text-center">
         <p className="mb-2 text-xl font-semibold text-[#424754]">
           {formatRate(numericAmount, 2)} {quote.from} =
         </p>
-        <p className="mb-3 text-4xl font-bold tracking-tight text-[#0058be] md:text-5xl">
+        <p className="mb-3 max-w-full break-words text-3xl font-bold tracking-tight text-[#0058be] sm:text-4xl md:text-5xl">
           {formatRate(quote.result, 2)} {quote.to}
         </p>
         <div className="flex flex-wrap items-center justify-center gap-2 font-mono text-sm text-[#727785]">
@@ -110,7 +110,7 @@ export function ConverterFormCard({
             1 {quote.to} = {formatRate(quote.inverseRate, 5)} {quote.from}
           </span>
         </div>
-        <p className="mt-3 flex items-center gap-1 font-mono text-xs font-medium text-[#727785]">
+        <p className="mt-3 flex flex-wrap items-center justify-center gap-1 font-mono text-xs font-medium text-[#727785]">
           <Info className="size-3.5" />
           Mid-market exchange rate at {quote.timestamp}
         </p>

@@ -79,7 +79,7 @@ export function GeneralSettingsCard({
           description="Select your preferred visual appearance."
           title="Theme Mode"
         >
-          <div className="inline-flex rounded-lg border border-[#c2c6d6] bg-[#f2f4f6] p-1">
+          <div className="grid w-full grid-cols-3 rounded-lg border border-[#c2c6d6] bg-[#f2f4f6] p-1 sm:inline-grid sm:w-auto">
             {themeOptions.map((option) => {
               const Icon = option.icon;
               const isActive = option.value === settings.themeMode;
@@ -88,7 +88,7 @@ export function GeneralSettingsCard({
                 <Button
                   key={option.value}
                   className={cn(
-                    "h-9 gap-2 rounded-md border border-transparent px-3 shadow-none",
+                    "h-9 min-w-0 gap-1 rounded-md border border-transparent px-2 shadow-none sm:gap-2 sm:px-3",
                     isActive
                       ? "border-[#c2c6d6] bg-white text-[#0058be] hover:bg-white"
                       : "bg-transparent text-[#424754] hover:bg-white/70",
