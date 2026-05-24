@@ -59,7 +59,7 @@ export function ConverterFormCard({
             label="From"
             options={currencyOptions}
             value={from}
-            onValueChange={(value) => setFrom(value as CurrencyCode)}
+            onValueChange={setFrom}
           />
 
           <Button
@@ -79,7 +79,7 @@ export function ConverterFormCard({
             label="To"
             options={currencyOptions}
             value={to}
-            onValueChange={(value) => setTo(value as CurrencyCode)}
+            onValueChange={setTo}
           />
         </div>
 
@@ -115,7 +115,7 @@ export function ConverterFormCard({
 
 type CurrencySelectFieldProps = {
   label: string;
-  onValueChange: (value: string) => void;
+  onValueChange: (value: CurrencyCode) => void;
   options: ConverterCurrencyOption[];
   value: CurrencyCode;
 };

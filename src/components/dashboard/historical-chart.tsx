@@ -14,29 +14,47 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { formatRate } from "@/lib/formatters/currency";
-import type { HistoricalRatePoint } from "@/lib/types/finance";
+import type {
+  CurrencyCode,
+  HistoricalRange,
+  HistoricalRatePoint,
+} from "@/lib/types/finance";
 import { cn } from "@/lib/utils";
 
 type HistoricalChartProps = {
+  base?: CurrencyCode;
   data: HistoricalRatePoint[];
+  onRangeChange?: (range: HistoricalRange) => void;
+  quote?: CurrencyCode;
+  selectedRange?: HistoricalRange;
 };
 
-const ranges = ["1W", "1M", "1Y"] as const;
+const ranges: HistoricalRange[] = ["1W", "1M", "1Y"];
 
 const ClientRateAreaChart = dynamic(() => Promise.resolve(RateAreaChart), {
   loading: () => <div className="h-full animate-pulse rounded-md bg-white/60" />,
   ssr: false,
 });
 
-export function HistoricalChart({ data }: HistoricalChartProps) {
-  const [selectedRange, setSelectedRange] =
-    useState<(typeof ranges)[number]>("1M");
+export function HistoricalChart({
+  base = "EUR",
+  data,
+  onRangeChange,
+  quote = "USD",
+  selectedRange,
+}: HistoricalChartProps) {
+  const [internalRange, setInternalRange] = useState<HistoricalRange>("1M");
+  const activeRange = selectedRange ?? internalRange;
   const latest = data.at(-1)?.rate ?? 0;
   const first = data[0]?.rate ?? latest;
   const change = first ? ((latest - first) / first) * 100 : 0;
 
   const domain = useMemo<[number, number]>(() => {
     const rates = data.map((point) => point.rate);
+    if (!rates.length) {
+      return [0, 1];
+    }
+
     const min = Math.min(...rates);
     const max = Math.max(...rates);
     const padding = (max - min) * 0.18 || 0.01;
@@ -55,8 +73,11 @@ export function HistoricalChart({ data }: HistoricalChartProps) {
             <Button
               key={range}
               size="sm"
-              variant={selectedRange === range ? "default" : "outline"}
-              onClick={() => setSelectedRange(range)}
+              variant={activeRange === range ? "default" : "outline"}
+              onClick={() => {
+                setInternalRange(range);
+                onRangeChange?.(range);
+              }}
             >
               {range}
             </Button>
@@ -66,7 +87,7 @@ export function HistoricalChart({ data }: HistoricalChartProps) {
 
       <div className="mb-6 flex flex-wrap items-baseline gap-3">
         <p className="text-2xl font-bold tracking-tight text-[#191c1e]">
-          EUR / USD
+          {base} / {quote}
         </p>
         <p className="font-mono text-lg font-medium text-[#00855b]">
           {formatRate(latest)}

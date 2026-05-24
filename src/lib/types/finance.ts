@@ -1,6 +1,13 @@
 export type TrendDirection = "up" | "down" | "flat";
 
-export type CurrencyCode = "USD" | "EUR" | "GBP" | "JPY" | "CAD" | "AUD";
+export type CurrencyCode = string;
+
+export type HistoricalRange = "1W" | "1M" | "1Y";
+
+export type CurrencyOption = {
+  code: CurrencyCode;
+  label: string;
+};
 
 export type OverviewMetric = {
   id: string;
@@ -35,9 +42,19 @@ export type ExchangeRate = {
   direction: TrendDirection;
 };
 
+export type CurrencyListItem = {
+  change24h: number;
+  code: CurrencyCode;
+  currentRate: number;
+  direction: TrendDirection;
+  name: string;
+  symbol: string;
+};
+
 export type ConverterDefaults = {
   from: CurrencyCode;
   to: CurrencyCode;
   amount: number;
+  currencyOptions: CurrencyOption[];
   rate: number;
 };

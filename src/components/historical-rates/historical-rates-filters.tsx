@@ -79,10 +79,7 @@ function CurrencySelect({
       <span className="mb-2 block font-mono text-xs font-medium uppercase tracking-wide text-[#424754]">
         {label}
       </span>
-      <Select
-        value={value}
-        onValueChange={(nextValue) => onValueChange(nextValue as CurrencyCode)}
-      >
+      <Select value={value} onValueChange={onValueChange}>
         <SelectTrigger className="h-12 w-full border-[#c2c6d6] bg-white text-[#191c1e] shadow-none">
           <SelectValue />
         </SelectTrigger>

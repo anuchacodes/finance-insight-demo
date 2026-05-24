@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { ArrowUpDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -13,18 +13,31 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formatRate } from "@/lib/formatters/currency";
-import type { ConverterDefaults, CurrencyCode } from "@/lib/types/finance";
+import type {
+  ConverterDefaults,
+  CurrencyCode,
+  CurrencyOption,
+} from "@/lib/types/finance";
 
 type CurrencyConverterProps = {
   defaults: ConverterDefaults;
+  isRateLoading?: boolean;
+  onAmountChange?: (amount: number) => void;
+  onCurrencyPairChange?: (pair: {
+    from: CurrencyCode;
+    to: CurrencyCode;
+  }) => void;
 };
 
-const currencies: CurrencyCode[] = ["USD", "EUR", "GBP", "JPY", "CAD", "AUD"];
-
-export function CurrencyConverter({ defaults }: CurrencyConverterProps) {
-  const [amount, setAmount] = useState(defaults.amount);
-  const [from, setFrom] = useState<CurrencyCode>(defaults.from);
-  const [to, setTo] = useState<CurrencyCode>(defaults.to);
+export function CurrencyConverter({
+  defaults,
+  isRateLoading = false,
+  onAmountChange,
+  onCurrencyPairChange,
+}: CurrencyConverterProps) {
+  const amount = defaults.amount;
+  const from = defaults.from;
+  const to = defaults.to;
 
   const converted = useMemo(() => amount * defaults.rate, [amount, defaults.rate]);
 
@@ -38,9 +51,12 @@ export function CurrencyConverter({ defaults }: CurrencyConverterProps) {
         <CurrencyAmountField
           label="From"
           amount={amount}
+          currencyOptions={defaults.currencyOptions}
           currency={from}
-          onAmountChange={setAmount}
-          onCurrencyChange={setFrom}
+          onAmountChange={onAmountChange}
+          onCurrencyChange={(nextFrom) =>
+            onCurrencyPairChange?.({ from: nextFrom, to })
+          }
         />
 
         <div className="flex justify-center">
@@ -48,10 +64,7 @@ export function CurrencyConverter({ defaults }: CurrencyConverterProps) {
             aria-label="Swap currencies"
             size="icon"
             variant="outline"
-            onClick={() => {
-              setFrom(to);
-              setTo(from);
-            }}
+            onClick={() => onCurrencyPairChange?.({ from: to, to: from })}
           >
             <ArrowUpDown className="size-4 text-[#0058be]" />
           </Button>
@@ -60,12 +73,17 @@ export function CurrencyConverter({ defaults }: CurrencyConverterProps) {
         <CurrencyAmountField
           label="To"
           amount={Number(converted.toFixed(2))}
+          currencyOptions={defaults.currencyOptions}
           currency={to}
-          onCurrencyChange={setTo}
+          onCurrencyChange={(nextTo) =>
+            onCurrencyPairChange?.({ from, to: nextTo })
+          }
           readOnly
         />
 
-        <Button className="mt-2 h-11">Convert</Button>
+        <Button className="mt-2 h-11" disabled={isRateLoading}>
+          {isRateLoading ? "Updating..." : "Convert"}
+        </Button>
         <p className="text-center text-xs text-[#424754]">
           1 {from} equals {formatRate(defaults.rate)} {to}
         </p>
@@ -77,6 +95,7 @@ export function CurrencyConverter({ defaults }: CurrencyConverterProps) {
 type CurrencyAmountFieldProps = {
   amount: number;
   currency: CurrencyCode;
+  currencyOptions: CurrencyOption[];
   label: string;
   onAmountChange?: (value: number) => void;
   onCurrencyChange: (value: CurrencyCode) => void;
@@ -86,6 +105,7 @@ type CurrencyAmountFieldProps = {
 function CurrencyAmountField({
   amount,
   currency,
+  currencyOptions,
   label,
   onAmountChange,
   onCurrencyChange,
@@ -97,17 +117,14 @@ function CurrencyAmountField({
         {label}
       </span>
       <div className="flex">
-        <Select
-          value={currency}
-          onValueChange={(value) => onCurrencyChange(value as CurrencyCode)}
-        >
+        <Select value={currency} onValueChange={onCurrencyChange}>
           <SelectTrigger className="h-11 w-[104px] rounded-r-none border-[#c2c6d6] bg-[#f2f4f6] text-[#191c1e] shadow-none">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {currencies.map((item) => (
-              <SelectItem key={item} value={item}>
-                {item}
+            {currencyOptions.map((item) => (
+              <SelectItem key={item.code} value={item.code}>
+                {item.label}
               </SelectItem>
             ))}
           </SelectContent>

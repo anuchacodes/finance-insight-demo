@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, CircleUserRound, Moon, Search } from "lucide-react";
+import { CircleUserRound, Moon, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -30,9 +30,6 @@ export function Topbar({
       </label>
 
       <div className="flex items-center gap-2">
-        <Button aria-label="Notifications" size="icon" variant="ghost">
-          <Bell className="size-5" />
-        </Button>
         <Button aria-label="Toggle contrast" size="icon" variant="ghost">
           <Moon className="size-5" />
         </Button>

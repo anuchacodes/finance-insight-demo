@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { MoreVertical } from "lucide-react";
 
 import { TrendBadge } from "@/components/finance/trend-badge";
@@ -16,7 +17,9 @@ export function ExchangeRateTable({ rates }: ExchangeRateTableProps) {
         <h2 className="text-xl font-semibold tracking-tight text-[#191c1e]">
           Latest Exchange Rates
         </h2>
-        <Button variant="link">View All</Button>
+        <Button asChild variant="link">
+          <Link href="/currencies">View All</Link>
+        </Button>
       </div>
 
       <div className="overflow-x-auto">

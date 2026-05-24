@@ -123,5 +123,13 @@ export const converterDefaults: ConverterDefaults = {
   from: "USD",
   to: "EUR",
   amount: 1000,
+  currencyOptions: [
+    { code: "USD", label: "USD" },
+    { code: "EUR", label: "EUR" },
+    { code: "GBP", label: "GBP" },
+    { code: "JPY", label: "JPY" },
+    { code: "CAD", label: "CAD" },
+    { code: "AUD", label: "AUD" },
+  ],
   rate: 0.9221,
 };
