@@ -1,4 +1,11 @@
-import { BarChart3, Clock3, Globe2, TrendingUp } from "lucide-react";
+import {
+  BarChart3,
+  Clock3,
+  Globe2,
+  Minus,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
 
 import type { OverviewMetric } from "@/lib/types/finance";
 import { cn } from "@/lib/utils";
@@ -15,8 +22,14 @@ type MetricCardProps = {
 };
 
 export function MetricCard({ metric }: MetricCardProps) {
-  const Icon = icons[metric.icon];
+  const Icon =
+    metric.icon === "trend" && metric.trend === "down"
+      ? TrendingDown
+      : metric.icon === "trend" && metric.trend === "flat"
+        ? Minus
+        : icons[metric.icon];
   const isPositiveTrend = metric.trend === "up";
+  const isNegativeTrend = metric.trend === "down";
 
   return (
     <article className="relative overflow-hidden rounded-lg border border-[#e0e3e5] bg-white p-5 shadow-[0_1px_3px_rgba(15,23,42,0.05)]">
@@ -26,6 +39,7 @@ export function MetricCard({ metric }: MetricCardProps) {
           className={cn(
             "size-5 text-[#2170e4]",
             isPositiveTrend && "text-[#00855b]",
+            isNegativeTrend && "text-[#ba1a1a]",
           )}
         />
       </div>
@@ -35,6 +49,7 @@ export function MetricCard({ metric }: MetricCardProps) {
           className={cn(
             "text-3xl font-bold tracking-tight text-[#191c1e] md:text-4xl",
             isPositiveTrend && "text-[#00855b]",
+            isNegativeTrend && "text-[#ba1a1a]",
           )}
         >
           {metric.value}
@@ -56,6 +71,9 @@ export function MetricCard({ metric }: MetricCardProps) {
 
       {isPositiveTrend ? (
         <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-[#00855b]/20 to-transparent" />
+      ) : null}
+      {isNegativeTrend ? (
+        <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-[#ba1a1a]/15 to-transparent" />
       ) : null}
     </article>
   );

@@ -3,7 +3,7 @@
 import { ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import type { SettingsTab } from "@/lib/mock/settings";
+import type { SettingsTab } from "@/lib/adapters/settings";
 import { cn } from "@/lib/utils";
 
 type SettingsNavProps = {

@@ -1,4 +1,5 @@
 import { Plus } from "lucide-react";
+import Link from "next/link";
 
 import { CurrencyPairRow } from "@/components/finance/currency-pair-row";
 import { Button } from "@/components/ui/button";
@@ -15,16 +16,27 @@ export function WatchlistCard({ items }: WatchlistCardProps) {
         <h2 className="text-xl font-semibold tracking-tight text-[#191c1e]">
           Watchlist
         </h2>
-        <Button aria-label="Add watchlist item" size="icon-sm" variant="ghost">
-          <Plus className="size-4 text-[#0058be]" />
+        <Button asChild aria-label="Add watchlist item" size="icon-sm" variant="ghost">
+          <Link href="/watchlist">
+            <Plus className="size-4 text-[#0058be]" />
+          </Link>
         </Button>
       </div>
 
-      <ul className="flex flex-col gap-3">
-        {items.map((item) => (
-          <CurrencyPairRow key={item.id} item={item} />
-        ))}
-      </ul>
+      {items.length ? (
+        <ul className="flex flex-col gap-3">
+          {items.map((item) => (
+            <CurrencyPairRow key={item.id} item={item} />
+          ))}
+        </ul>
+      ) : (
+        <div className="rounded-lg border border-dashed border-[#c2c6d6] bg-[#f7f9fb] px-4 py-5 text-center">
+          <p className="text-sm font-medium text-[#191c1e]">No pinned pairs</p>
+          <Button asChild className="mt-2 h-auto p-0" size="sm" variant="link">
+            <Link href="/watchlist">Manage watchlist</Link>
+          </Button>
+        </div>
+      )}
     </section>
   );
 }

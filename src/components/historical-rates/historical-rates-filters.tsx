@@ -8,18 +8,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { HistoricalCurrencyOption } from "@/lib/mock/historical-rates";
-import type { CurrencyCode } from "@/lib/types/finance";
+import type { CurrencyCode, CurrencyOption } from "@/lib/types/finance";
 
 type HistoricalRatesFiltersProps = {
   baseCurrency: CurrencyCode;
-  baseOptions: HistoricalCurrencyOption[];
+  baseOptions: CurrencyOption[];
   dateRange: string;
   onBaseCurrencyChange: (value: CurrencyCode) => void;
   onDateRangeChange: (value: string) => void;
   onQuoteCurrencyChange: (value: CurrencyCode) => void;
   quoteCurrency: CurrencyCode;
-  quoteOptions: HistoricalCurrencyOption[];
+  quoteOptions: CurrencyOption[];
 };
 
 export function HistoricalRatesFilters({
@@ -64,7 +63,7 @@ export function HistoricalRatesFilters({
 type CurrencySelectProps = {
   label: string;
   onValueChange: (value: CurrencyCode) => void;
-  options: HistoricalCurrencyOption[];
+  options: CurrencyOption[];
   value: CurrencyCode;
 };
 
@@ -79,10 +78,7 @@ function CurrencySelect({
       <span className="mb-2 block font-mono text-xs font-medium uppercase tracking-wide text-[#424754]">
         {label}
       </span>
-      <Select
-        value={value}
-        onValueChange={(nextValue) => onValueChange(nextValue as CurrencyCode)}
-      >
+      <Select value={value} onValueChange={onValueChange}>
         <SelectTrigger className="h-12 w-full border-[#c2c6d6] bg-white text-[#191c1e] shadow-none">
           <SelectValue />
         </SelectTrigger>

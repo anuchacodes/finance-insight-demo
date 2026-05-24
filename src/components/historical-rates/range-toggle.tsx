@@ -1,13 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import type { HistoricalRange } from "@/lib/mock/historical-rates";
+import type { HistoricalAnalysisRange } from "@/lib/adapters/historical-rates";
 import { cn } from "@/lib/utils";
 
 type RangeToggleProps = {
-  onValueChange: (range: HistoricalRange) => void;
-  ranges: HistoricalRange[];
-  value: HistoricalRange;
+  onValueChange: (range: HistoricalAnalysisRange) => void;
+  ranges: HistoricalAnalysisRange[];
+  value: HistoricalAnalysisRange;
 };
 
 export function RangeToggle({ onValueChange, ranges, value }: RangeToggleProps) {

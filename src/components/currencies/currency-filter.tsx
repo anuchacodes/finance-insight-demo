@@ -11,20 +11,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { currencyBaseOptions } from "@/lib/mock/currencies";
+import type { CurrencySortKey } from "@/lib/adapters/currencies";
+import type { CurrencyCode, CurrencyOption } from "@/lib/types/finance";
 
 type CurrencyFilterProps = {
-  baseCurrency: string;
-  onBaseCurrencyChange: (value: string) => void;
+  baseCurrency: CurrencyCode;
+  baseOptions: CurrencyOption[];
+  onBaseCurrencyChange: (value: CurrencyCode) => void;
   onSearchChange: (value: string) => void;
+  onSortChange: () => void;
   search: string;
+  sortKey: CurrencySortKey;
 };
 
 export function CurrencyFilter({
   baseCurrency,
+  baseOptions,
   onBaseCurrencyChange,
   onSearchChange,
+  onSortChange,
   search,
+  sortKey,
 }: CurrencyFilterProps) {
   return (
     <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -46,17 +53,21 @@ export function CurrencyFilter({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {currencyBaseOptions.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
+            {baseOptions.map((option) => (
+              <SelectItem key={option.code} value={option.code}>
                 {option.label}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
 
-        <Button className="h-11 gap-2 border-[#c2c6d6] bg-white" variant="outline">
+        <Button
+          className="h-11 gap-2 border-[#c2c6d6] bg-white"
+          variant="outline"
+          onClick={onSortChange}
+        >
           <SlidersHorizontal className="size-4" />
-          Sort
+          Sort: {sortKey}
         </Button>
       </div>
     </div>

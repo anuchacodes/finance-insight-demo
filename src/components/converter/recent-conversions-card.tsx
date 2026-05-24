@@ -1,7 +1,7 @@
 import { History } from "lucide-react";
 
 import { formatRate } from "@/lib/formatters/currency";
-import type { RecentConversion } from "@/lib/mock/converter";
+import type { RecentConversion } from "@/lib/adapters/converter";
 
 type RecentConversionsCardProps = {
   conversions: RecentConversion[];
@@ -17,7 +17,8 @@ export function RecentConversionsCard({
       </h2>
 
       <div className="divide-y divide-[#e0e3e5]">
-        {conversions.map((conversion) => (
+        {conversions.length ? (
+          conversions.map((conversion) => (
           <article
             key={conversion.id}
             className="flex flex-col gap-3 rounded-lg px-2 py-4 transition-colors hover:bg-[#f7f9fb] sm:flex-row sm:items-center sm:justify-between"
@@ -46,7 +47,17 @@ export function RecentConversionsCard({
               </p>
             </div>
           </article>
-        ))}
+          ))
+        ) : (
+          <div className="rounded-lg border border-dashed border-[#c2c6d6] bg-[#f7f9fb] p-6 text-center">
+            <p className="text-sm font-semibold text-[#191c1e]">
+              No conversions yet
+            </p>
+            <p className="mt-1 text-sm text-[#424754]">
+              Converted amounts will appear here during this session.
+            </p>
+          </div>
+        )}
       </div>
     </section>
   );

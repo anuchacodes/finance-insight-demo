@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import { ArrowLeftRight, Info } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -13,30 +12,34 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formatRate } from "@/lib/formatters/currency";
-import type {
-  ConversionQuote,
-  ConverterCurrencyOption,
-} from "@/lib/mock/converter";
-import type { CurrencyCode } from "@/lib/types/finance";
+import type { ConversionQuote } from "@/lib/adapters/converter";
+import type { CurrencyCode, CurrencyOption } from "@/lib/types/finance";
 
 type ConverterFormCardProps = {
-  currencyOptions: ConverterCurrencyOption[];
+  amount: string;
+  currencyOptions: CurrencyOption[];
+  isRateLoading?: boolean;
+  onAmountChange: (value: string) => void;
+  onConvert: () => void;
+  onFromChange: (value: CurrencyCode) => void;
+  onSwap: () => void;
+  onToChange: (value: CurrencyCode) => void;
   quote: ConversionQuote;
 };
 
 export function ConverterFormCard({
+  amount,
   currencyOptions,
+  isRateLoading = false,
+  onAmountChange,
+  onConvert,
+  onFromChange,
+  onSwap,
+  onToChange,
   quote,
 }: ConverterFormCardProps) {
-  const [amount, setAmount] = useState(String(quote.amount));
-  const [from, setFrom] = useState<CurrencyCode>(quote.from);
-  const [to, setTo] = useState<CurrencyCode>(quote.to);
-
   const numericAmount = Number(amount.replaceAll(",", "")) || 0;
-  const result = useMemo(
-    () => numericAmount * quote.rate,
-    [numericAmount, quote.rate],
-  );
+  const isConvertDisabled = isRateLoading || numericAmount <= 0 || !quote.rate;
 
   return (
     <section className="rounded-lg border border-[#c2c6d6] bg-white p-5 shadow-[0_1px_3px_rgba(15,23,42,0.05)]">
@@ -50,7 +53,7 @@ export function ConverterFormCard({
             inputMode="decimal"
             type="text"
             value={amount}
-            onChange={(event) => setAmount(event.target.value)}
+            onChange={(event) => onAmountChange(event.target.value)}
           />
         </label>
 
@@ -58,8 +61,8 @@ export function ConverterFormCard({
           <CurrencySelectField
             label="From"
             options={currencyOptions}
-            value={from}
-            onValueChange={(value) => setFrom(value as CurrencyCode)}
+            value={quote.from}
+            onValueChange={onFromChange}
           />
 
           <Button
@@ -67,10 +70,7 @@ export function ConverterFormCard({
             className="mx-auto size-12 rounded-full border-[#c2c6d6] bg-[#f2f4f6] md:mb-0"
             size="icon"
             variant="outline"
-            onClick={() => {
-              setFrom(to);
-              setTo(from);
-            }}
+            onClick={onSwap}
           >
             <ArrowLeftRight className="size-5 text-[#0058be]" />
           </Button>
@@ -78,30 +78,36 @@ export function ConverterFormCard({
           <CurrencySelectField
             label="To"
             options={currencyOptions}
-            value={to}
-            onValueChange={(value) => setTo(value as CurrencyCode)}
+            value={quote.to}
+            onValueChange={onToChange}
           />
         </div>
 
-        <Button className="h-12 w-full text-base">Convert</Button>
+        <Button
+          className="h-12 w-full text-base"
+          disabled={isConvertDisabled}
+          onClick={onConvert}
+        >
+          {isRateLoading ? "Updating..." : "Convert"}
+        </Button>
       </div>
 
       <hr className="my-8 border-[#e0e3e5]" />
 
       <div className="flex flex-col items-center justify-center py-4 text-center">
         <p className="mb-2 text-xl font-semibold text-[#424754]">
-          {formatRate(numericAmount, 2)} {from} =
+          {formatRate(numericAmount, 2)} {quote.from} =
         </p>
         <p className="mb-3 text-4xl font-bold tracking-tight text-[#0058be] md:text-5xl">
-          {formatRate(result, 2)} {to}
+          {formatRate(quote.result, 2)} {quote.to}
         </p>
         <div className="flex flex-wrap items-center justify-center gap-2 font-mono text-sm text-[#727785]">
           <span>
-            1 {from} = {formatRate(quote.rate, 5)} {to}
+            1 {quote.from} = {formatRate(quote.rate, 5)} {quote.to}
           </span>
           <span className="size-1 rounded-full bg-[#c2c6d6]" />
           <span>
-            1 {to} = {formatRate(quote.inverseRate, 5)} {from}
+            1 {quote.to} = {formatRate(quote.inverseRate, 5)} {quote.from}
           </span>
         </div>
         <p className="mt-3 flex items-center gap-1 font-mono text-xs font-medium text-[#727785]">
@@ -115,8 +121,8 @@ export function ConverterFormCard({
 
 type CurrencySelectFieldProps = {
   label: string;
-  onValueChange: (value: string) => void;
-  options: ConverterCurrencyOption[];
+  onValueChange: (value: CurrencyCode) => void;
+  options: CurrencyOption[];
   value: CurrencyCode;
 };
 

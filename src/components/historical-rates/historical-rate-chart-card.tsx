@@ -11,11 +11,12 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { TrendingUp } from "lucide-react";
+import { Minus, TrendingDown, TrendingUp } from "lucide-react";
 
 import { formatRate } from "@/lib/formatters/currency";
 import { formatPercentage } from "@/lib/formatters/percentage";
-import type { HistoricalChartPoint } from "@/lib/mock/historical-rates";
+import type { HistoricalChartPoint } from "@/lib/adapters/historical-rates";
+import { cn } from "@/lib/utils";
 
 type HistoricalRateChartCardProps = {
   baseCurrency: string;
@@ -42,12 +43,18 @@ export function HistoricalRateChartCard({
 
   const domain = useMemo<[number, number]>(() => {
     const rates = chartData.map((point) => point.rate);
+    if (!rates.length) {
+      return [0, 1];
+    }
+
     const min = Math.min(...rates);
     const max = Math.max(...rates);
     const padding = (max - min) * 0.18 || 0.01;
 
     return [Number((min - padding).toFixed(4)), Number((max + padding).toFixed(4))];
   }, [chartData]);
+  const TrendIcon =
+    change > 0 ? TrendingUp : change < 0 ? TrendingDown : Minus;
 
   return (
     <section className="rounded-lg border border-[#c2c6d6] bg-white p-5 shadow-[0_1px_3px_rgba(15,23,42,0.05)]">
@@ -55,8 +62,15 @@ export function HistoricalRateChartCard({
         <h2 className="text-2xl font-semibold tracking-tight text-[#191c1e]">
           {baseCurrency} to {quoteCurrency} Rate
         </h2>
-        <span className="inline-flex items-center gap-1 rounded bg-[#00855b]/10 px-2 py-1 font-mono text-xs font-bold uppercase tracking-wide text-[#00855b]">
-          <TrendingUp className="size-3.5" />
+        <span
+          className={cn(
+            "inline-flex items-center gap-1 rounded px-2 py-1 font-mono text-xs font-bold uppercase tracking-wide",
+            change > 0 && "bg-[#00855b]/10 text-[#00855b]",
+            change < 0 && "bg-[#ba1a1a]/10 text-[#ba1a1a]",
+            change === 0 && "bg-[#e0e3e5] text-[#424754]",
+          )}
+        >
+          <TrendIcon className="size-3.5" />
           {formatPercentage(change)}
         </span>
       </div>
@@ -109,7 +123,6 @@ function HistoricalAreaChart({ data, domain }: HistoricalAreaChartProps) {
             boxShadow: "0 10px 15px -3px rgba(15, 23, 42, 0.1)",
           }}
           formatter={(value) => [formatRate(Number(value), 3), "Rate"]}
-          labelFormatter={(label) => `${label}, 2023`}
         />
         <Area
           activeDot={{ fill: "#0058be", r: 5, stroke: "#ffffff", strokeWidth: 2 }}
