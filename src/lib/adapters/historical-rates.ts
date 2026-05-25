@@ -24,8 +24,10 @@ export const historicalAnalysisRanges: HistoricalAnalysisRange[] = [
   "1Y",
 ];
 
-function formatChartDate(date: string) {
-  return new Intl.DateTimeFormat("en-US", {
+function formatChartDate(date: string, language = "en") {
+  const locale = language === "th" ? "th-TH" : "en-US";
+
+  return new Intl.DateTimeFormat(locale, {
     day: "numeric",
     month: "short",
   }).format(new Date(`${date}T00:00:00`));
@@ -78,9 +80,12 @@ export function toSortedHistoricalRates(rates: FrankfurterRate[] = []) {
   );
 }
 
-export function toHistoricalChartPoints(rates: FrankfurterRate[] = []) {
+export function toHistoricalChartPoints(
+  rates: FrankfurterRate[] = [],
+  language = "en",
+) {
   return toSortedHistoricalRates(rates).map<HistoricalChartPoint>((rate) => ({
-    date: formatChartDate(rate.date),
+    date: formatChartDate(rate.date, language),
     rate: rate.rate,
   }));
 }

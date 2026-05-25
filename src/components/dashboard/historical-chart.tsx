@@ -19,6 +19,7 @@ import type {
   HistoricalRange,
   HistoricalRatePoint,
 } from "@/lib/types/finance";
+import { useTranslations } from "@/lib/i18n/use-translations";
 import { cn } from "@/lib/utils";
 
 type HistoricalChartProps = {
@@ -43,6 +44,7 @@ export function HistoricalChart({
   quote = "USD",
   selectedRange,
 }: HistoricalChartProps) {
+  const t = useTranslations();
   const [internalRange, setInternalRange] = useState<HistoricalRange>("1M");
   const activeRange = selectedRange ?? internalRange;
   const latest = data.at(-1)?.rate ?? 0;
@@ -66,7 +68,7 @@ export function HistoricalChart({
     <section className="rounded-lg border border-[#e0e3e5] bg-white p-5 shadow-[0_1px_3px_rgba(15,23,42,0.05)]">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-xl font-semibold tracking-tight text-[#191c1e]">
-          Historical Exchange Rate
+          {t.dashboard.historicalTitle}
         </h2>
         <div className="flex gap-2">
           {ranges.map((range) => (
@@ -116,6 +118,7 @@ type RateAreaChartProps = {
 };
 
 function RateAreaChart({ data, domain }: RateAreaChartProps) {
+  const t = useTranslations();
   return (
     <ResponsiveContainer height="100%" minWidth={0} width="100%">
       <AreaChart data={data} margin={{ bottom: 8, left: 0, right: 10, top: 8 }}>
@@ -146,7 +149,7 @@ function RateAreaChart({ data, domain }: RateAreaChartProps) {
             borderRadius: "8px",
             boxShadow: "0 10px 15px -3px rgba(15, 23, 42, 0.1)",
           }}
-          formatter={(value) => [formatRate(Number(value)), "Rate"]}
+          formatter={(value) => [formatRate(Number(value)), t.dashboard.historicalTooltipRate]}
         />
         <Area
           dataKey="rate"

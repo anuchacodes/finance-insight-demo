@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formatRate } from "@/lib/formatters/currency";
+import { useTranslations } from "@/lib/i18n/use-translations";
 import type { ConversionQuote } from "@/lib/adapters/converter";
 import type { CurrencyCode, CurrencyOption } from "@/lib/types/finance";
 
@@ -38,6 +39,7 @@ export function ConverterFormCard({
   onToChange,
   quote,
 }: ConverterFormCardProps) {
+  const t = useTranslations();
   const numericAmount = Number(amount.replaceAll(",", "")) || 0;
   const isConvertDisabled = isRateLoading || numericAmount <= 0 || !quote.rate;
 
@@ -46,7 +48,7 @@ export function ConverterFormCard({
       <div className="space-y-6">
         <label className="block">
           <span className="mb-2 block font-mono text-xs font-medium uppercase tracking-wide text-[#424754]">
-            Amount
+            {t.converter.amountLabel}
           </span>
           <Input
             className="h-14 border-[#c2c6d6] bg-[#f7f9fb] px-4 font-mono text-2xl font-semibold text-[#191c1e] shadow-none"
@@ -59,14 +61,14 @@ export function ConverterFormCard({
 
         <div className="grid grid-cols-1 items-end gap-4 md:grid-cols-[1fr_auto_1fr]">
           <CurrencySelectField
-            label="From"
+            label={t.converter.fromLabel}
             options={currencyOptions}
             value={quote.from}
             onValueChange={onFromChange}
           />
 
           <Button
-            aria-label="Swap currencies"
+            aria-label={t.converter.swapAriaLabel}
             className="mx-auto size-12 rounded-full border-[#c2c6d6] bg-[#f2f4f6] md:mb-0"
             size="icon"
             variant="outline"
@@ -76,7 +78,7 @@ export function ConverterFormCard({
           </Button>
 
           <CurrencySelectField
-            label="To"
+            label={t.converter.toLabel}
             options={currencyOptions}
             value={quote.to}
             onValueChange={onToChange}
@@ -88,7 +90,7 @@ export function ConverterFormCard({
           disabled={isConvertDisabled}
           onClick={onConvert}
         >
-          {isRateLoading ? "Updating..." : "Convert"}
+          {isRateLoading ? t.converter.updatingButton : t.converter.convertButton}
         </Button>
       </div>
 
@@ -112,7 +114,7 @@ export function ConverterFormCard({
         </div>
         <p className="mt-3 flex flex-wrap items-center justify-center gap-1 font-mono text-xs font-medium text-[#727785]">
           <Info className="size-3.5" />
-          Mid-market exchange rate at {quote.timestamp}
+          {t.converter.midMarketRateAt} {quote.timestamp}
         </p>
       </div>
     </section>

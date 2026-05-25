@@ -4,21 +4,24 @@ import { MoreVertical } from "lucide-react";
 import { TrendBadge } from "@/components/finance/trend-badge";
 import { Button } from "@/components/ui/button";
 import { formatRate } from "@/lib/formatters/currency";
+import { useTranslations } from "@/lib/i18n/use-translations";
 import type { ExchangeRate } from "@/lib/types/finance";
 
 type ExchangeRateTableProps = {
   rates: ExchangeRate[];
+  baseCurrency?: string;
 };
 
-export function ExchangeRateTable({ rates }: ExchangeRateTableProps) {
+export function ExchangeRateTable({ rates, baseCurrency = "USD" }: ExchangeRateTableProps) {
+  const t = useTranslations();
   return (
     <section className="overflow-hidden rounded-lg border border-[#e0e3e5] bg-white shadow-[0_1px_3px_rgba(15,23,42,0.05)]">
       <div className="flex items-center justify-between border-b border-[#e0e3e5] bg-[#f7f9fb] p-5">
         <h2 className="text-xl font-semibold tracking-tight text-[#191c1e]">
-          Latest Exchange Rates
+          {t.dashboard.latestRatesTitle}
         </h2>
         <Button asChild variant="link">
-          <Link href="/currencies">View All</Link>
+          <Link href="/currencies">{t.dashboard.viewAllLink}</Link>
         </Button>
       </div>
 
@@ -27,19 +30,19 @@ export function ExchangeRateTable({ rates }: ExchangeRateTableProps) {
           <thead>
             <tr className="border-b border-[#e0e3e5] bg-white">
               <th className="px-4 py-3 font-mono text-xs font-medium uppercase tracking-wide text-[#424754]">
-                Code
+                {t.dashboard.tableHeaderCode}
               </th>
               <th className="px-4 py-3 font-mono text-xs font-medium uppercase tracking-wide text-[#424754]">
-                Currency Name
+                {t.dashboard.tableHeaderName}
               </th>
               <th className="px-4 py-3 text-right font-mono text-xs font-medium uppercase tracking-wide text-[#424754]">
-                Rate (USD)
+                {t.dashboard.tableHeaderRate} ({baseCurrency})
               </th>
               <th className="px-4 py-3 text-right font-mono text-xs font-medium uppercase tracking-wide text-[#424754]">
-                Change (24h)
+                {t.dashboard.tableHeaderChange}
               </th>
               <th className="w-16 px-4 py-3 text-center font-mono text-xs font-medium uppercase tracking-wide text-[#424754]">
-                Action
+                {t.dashboard.tableHeaderAction}
               </th>
             </tr>
           </thead>
@@ -61,7 +64,7 @@ export function ExchangeRateTable({ rates }: ExchangeRateTableProps) {
                 </td>
                 <td className="px-4 py-3 text-center">
                   <Button
-                    aria-label={`Open ${rate.code} actions`}
+                    aria-label={`${t.dashboard.openRateActionsAria}: ${rate.code}`}
                     className="opacity-100 md:opacity-0 md:group-hover:opacity-100"
                     size="icon-sm"
                     variant="ghost"

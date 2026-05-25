@@ -1,6 +1,7 @@
 import { History } from "lucide-react";
 
 import { formatRate } from "@/lib/formatters/currency";
+import { useTranslations } from "@/lib/i18n/use-translations";
 import type { RecentConversion } from "@/lib/adapters/converter";
 
 type RecentConversionsCardProps = {
@@ -10,10 +11,11 @@ type RecentConversionsCardProps = {
 export function RecentConversionsCard({
   conversions,
 }: RecentConversionsCardProps) {
+  const t = useTranslations();
   return (
     <section className="rounded-lg border border-[#c2c6d6] bg-white p-5 shadow-[0_1px_3px_rgba(15,23,42,0.05)]">
       <h2 className="mb-5 text-xl font-semibold tracking-tight text-[#191c1e]">
-        Recent Conversions
+        {t.converter.recentTitle}
       </h2>
 
       <div className="divide-y divide-[#e0e3e5]">
@@ -43,7 +45,7 @@ export function RecentConversionsCard({
                 {formatRate(conversion.convertedAmount, 2)} {conversion.to}
               </p>
               <p className="mt-1 font-mono text-xs text-[#727785]">
-                Rate: {formatRate(conversion.rate, 4)}
+                {t.converter.rateLabel} {formatRate(conversion.rate, 4)}
               </p>
             </div>
           </article>
@@ -51,10 +53,10 @@ export function RecentConversionsCard({
         ) : (
           <div className="rounded-lg border border-dashed border-[#c2c6d6] bg-[#f7f9fb] p-6 text-center">
             <p className="text-sm font-semibold text-[#191c1e]">
-              No conversions yet
+              {t.converter.noConversionsTitle}
             </p>
             <p className="mt-1 text-sm text-[#424754]">
-              Converted amounts will appear here during this session.
+              {t.converter.noConversionsDescription}
             </p>
           </div>
         )}

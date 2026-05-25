@@ -3,6 +3,7 @@
 import { AlertTriangle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "@/lib/i18n/use-translations";
 import { cn } from "@/lib/utils";
 import { type UiStateKey, useUiStateStore } from "@/store/ui-state-store";
 
@@ -21,14 +22,15 @@ export function ErrorState({
   stateKey,
   title,
 }: ErrorStateProps) {
+  const t = useTranslations();
   const storeError = useUiStateStore((state) =>
     stateKey ? state.errors[stateKey] : undefined,
   );
-  const resolvedTitle = title ?? storeError?.title ?? "Unable to load data";
+  const resolvedTitle = title ?? storeError?.title ?? t.common.unableToLoadData;
   const resolvedDescription =
     description ??
     storeError?.description ??
-    "The request could not be completed. Try again in a moment.";
+    t.common.unableToLoadDescription;
 
   if (stateKey && !storeError && !title) {
     return null;
@@ -48,7 +50,7 @@ export function ErrorState({
       </p>
       {onRetry ? (
         <Button className="mt-4" size="sm" onClick={onRetry}>
-          Retry
+          {t.common.retry}
         </Button>
       ) : null}
     </div>

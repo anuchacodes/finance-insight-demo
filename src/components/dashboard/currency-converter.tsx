@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formatRate } from "@/lib/formatters/currency";
+import { useTranslations } from "@/lib/i18n/use-translations";
 import type {
   ConverterDefaults,
   CurrencyCode,
@@ -35,6 +36,7 @@ export function CurrencyConverter({
   onAmountChange,
   onCurrencyPairChange,
 }: CurrencyConverterProps) {
+  const t = useTranslations();
   const amount = defaults.amount;
   const from = defaults.from;
   const to = defaults.to;
@@ -44,12 +46,12 @@ export function CurrencyConverter({
   return (
     <section className="rounded-lg border border-[#e0e3e5] bg-white p-5 shadow-[0_1px_3px_rgba(15,23,42,0.05)]">
       <h2 className="mb-6 text-xl font-semibold tracking-tight text-[#191c1e]">
-        Quick Converter
+        {t.dashboard.quickConverterTitle}
       </h2>
 
       <div className="flex flex-col gap-4">
         <CurrencyAmountField
-          label="From"
+          label={t.dashboard.fromLabel}
           amount={amount}
           currencyOptions={defaults.currencyOptions}
           currency={from}
@@ -61,7 +63,7 @@ export function CurrencyConverter({
 
         <div className="flex justify-center">
           <Button
-            aria-label="Swap currencies"
+            aria-label={t.dashboard.swapAriaLabel}
             size="icon"
             variant="outline"
             onClick={() => onCurrencyPairChange?.({ from: to, to: from })}
@@ -71,7 +73,7 @@ export function CurrencyConverter({
         </div>
 
         <CurrencyAmountField
-          label="To"
+          label={t.dashboard.toLabel}
           amount={Number(converted.toFixed(2))}
           currencyOptions={defaults.currencyOptions}
           currency={to}
@@ -82,10 +84,10 @@ export function CurrencyConverter({
         />
 
         <Button className="mt-2 h-11" disabled={isRateLoading}>
-          {isRateLoading ? "Updating..." : "Convert"}
+          {isRateLoading ? t.dashboard.updatingButton : t.dashboard.convertButton}
         </Button>
         <p className="text-center text-xs text-[#424754]">
-          1 {from} equals {formatRate(defaults.rate)} {to}
+          1 {from} {t.dashboard.converterEquals} {formatRate(defaults.rate)} {to}
         </p>
       </div>
     </section>
