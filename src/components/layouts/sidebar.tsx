@@ -4,19 +4,23 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { dashboardNavigation } from "@/components/layouts/navigation";
+import { useTranslations } from "@/lib/i18n/use-translations";
 import { cn } from "@/lib/utils";
 
 export function Sidebar() {
   const pathname = usePathname();
+  const t = useTranslations();
 
   return (
     <aside className="fixed inset-y-0 left-0 z-40 hidden w-[260px] flex-col bg-[#2d3133] px-4 py-6 text-[#eff1f3] md:flex">
       <div className="mb-9 px-1">
         <Link href="/" className="block">
           <p className="text-2xl font-bold tracking-tight text-white">
-            Finance Insight
+            {t.layout.brandName}
           </p>
-          <p className="mt-1 text-sm text-[#bec6e0]">SaaS Analytics</p>
+          <p className="mt-1 text-sm text-[#bec6e0]">
+            {t.layout.navigationSubtitle}
+          </p>
         </Link>
       </div>
 
@@ -35,7 +39,7 @@ export function Sidebar() {
               )}
             >
               <Icon className="size-5" />
-              {item.label}
+              {t.navigation[item.labelKey]}
             </Link>
           );
         })}

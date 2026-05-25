@@ -2,6 +2,7 @@
 
 import { Loader2 } from "lucide-react";
 
+import { useTranslations } from "@/lib/i18n/use-translations";
 import { cn } from "@/lib/utils";
 import { type UiStateKey, useUiStateStore } from "@/store/ui-state-store";
 
@@ -14,10 +15,11 @@ type LoadingStateProps = {
 
 export function LoadingState({
   className,
-  description = "Loading market data...",
+  description,
   stateKey,
-  title = "Please wait",
+  title,
 }: LoadingStateProps) {
+  const t = useTranslations();
   const isLoading = useUiStateStore((state) =>
     stateKey ? state.loading[stateKey] : true,
   );
@@ -34,8 +36,12 @@ export function LoadingState({
       )}
     >
       <Loader2 className="mb-3 size-5 animate-spin text-[#0058be]" />
-      <p className="text-sm font-semibold text-[#191c1e]">{title}</p>
-      <p className="mt-1 max-w-sm text-sm text-[#424754]">{description}</p>
+      <p className="text-sm font-semibold text-[#191c1e]">
+        {title ?? t.common.loadingTitle}
+      </p>
+      <p className="mt-1 max-w-sm text-sm text-[#424754]">
+        {description ?? t.common.loadingDescription}
+      </p>
     </div>
   );
 }

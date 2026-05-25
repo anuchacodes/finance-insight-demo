@@ -4,6 +4,7 @@ import type { FrankfurterCurrency } from "@/services/frankfurter-service";
 export type SettingsTab = {
   id: string;
   label: string;
+  labelKey: "general";
 };
 
 export type SettingsOption = {
@@ -12,9 +13,11 @@ export type SettingsOption = {
 };
 
 export type ThemeMode = "dark" | "light" | "system";
+export type Language = "en" | "th";
 
 export type AppSettings = {
   baseCurrency: CurrencyCode;
+  language: Language;
   refreshInterval: string;
   themeMode: ThemeMode;
 };
@@ -23,14 +26,20 @@ export const settingsStorageKey = "finance-insight-settings";
 export const settingsChangeEvent = "finance-insight-settings-change";
 
 export const settingsTabs: SettingsTab[] = [
-  { id: "general", label: "General" },
+  { id: "general", label: "General", labelKey: "general" },
 ];
 
 export const defaultSettings: AppSettings = {
   baseCurrency: "USD",
+  language: "en",
   refreshInterval: "60",
   themeMode: "light",
 };
+
+export const languageOptions: SettingsOption[] = [
+  { label: "English", value: "en" },
+  { label: "ไทย", value: "th" },
+];
 
 export const refreshIntervalOptions: SettingsOption[] = [
   { label: "Manual (Off)", value: "0" },
@@ -66,6 +75,10 @@ export function normalizeSettings(
 
   return {
     baseCurrency: baseCurrency ?? fallbackCurrency,
+    language:
+      settings.language === "en" || settings.language === "th"
+        ? settings.language
+        : defaultSettings.language,
     refreshInterval:
       refreshIntervalOptions.find(
         (option) => option.value === settings.refreshInterval,

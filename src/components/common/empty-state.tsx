@@ -3,6 +3,7 @@
 import { Inbox } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "@/lib/i18n/use-translations";
 import { cn } from "@/lib/utils";
 import { type UiStateKey, useUiStateStore } from "@/store/ui-state-store";
 
@@ -23,14 +24,15 @@ export function EmptyState({
   stateKey,
   title,
 }: EmptyStateProps) {
+  const t = useTranslations();
   const storeEmpty = useUiStateStore((state) =>
     stateKey ? state.empty[stateKey] : undefined,
   );
-  const resolvedTitle = title ?? storeEmpty?.title ?? "No data yet";
+  const resolvedTitle = title ?? storeEmpty?.title ?? t.common.emptyTitle;
   const resolvedDescription =
     description ??
     storeEmpty?.description ??
-    "There is nothing to show for the current selection.";
+    t.common.emptyDescription;
 
   if (stateKey && !storeEmpty && !title) {
     return null;

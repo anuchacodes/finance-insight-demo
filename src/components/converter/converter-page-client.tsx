@@ -15,12 +15,14 @@ import {
 } from "@/lib/adapters/converter";
 import { useSingleRate } from "@/lib/query/hooks/use-converter";
 import { useCurrencies } from "@/lib/query/hooks/use-currencies";
+import { useTranslations } from "@/lib/i18n/use-translations";
 import type { CurrencyCode } from "@/lib/types/finance";
 
 const defaultFromCurrency: CurrencyCode = "USD";
 const defaultToCurrency: CurrencyCode = "EUR";
 
 export function ConverterPageClient() {
+  const t = useTranslations();
   const [amount, setAmount] = useState("1000");
   const [from, setFrom] = useState<CurrencyCode>(defaultFromCurrency);
   const [recentConversions, setRecentConversions] = useState<RecentConversion[]>(
@@ -94,9 +96,9 @@ export function ConverterPageClient() {
           description={
             error instanceof Error
               ? error.message
-              : "The currency list could not be loaded."
+              : t.converter.errorCurrenciesDescription
           }
-          title="Unable to load converter"
+          title={t.converter.errorCurrenciesTitle}
           onRetry={() => {
             void currenciesQuery.refetch();
           }}
@@ -110,8 +112,8 @@ export function ConverterPageClient() {
       <div className="mx-auto flex max-w-3xl flex-col gap-6">
         <ConverterHeader />
         <EmptyState
-          description="Frankfurter did not return currencies for the converter."
-          title="No currencies available"
+          description={t.converter.emptyCurrenciesDescription}
+          title={t.converter.emptyCurrenciesTitle}
         />
       </div>
     );
@@ -126,9 +128,9 @@ export function ConverterPageClient() {
           description={
             rateError instanceof Error
               ? rateError.message
-              : "The conversion rate could not be loaded."
+              : t.converter.errorRateDescription
           }
-          title="Unable to load conversion rate"
+          title={t.converter.errorRateTitle}
           onRetry={() => {
             void rateQuery.refetch();
           }}
@@ -152,13 +154,14 @@ export function ConverterPageClient() {
 }
 
 function ConverterHeader() {
+  const t = useTranslations();
   return (
     <header className="mb-2">
       <h1 className="text-4xl font-bold tracking-tight text-[#191c1e] md:text-5xl">
-        Currency Converter
+        {t.converter.pageTitle}
       </h1>
       <p className="mt-3 text-base text-[#424754]">
-        Real-time exchange rates and historical conversion data.
+        {t.converter.pageDescription}
       </p>
     </header>
   );

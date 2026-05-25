@@ -13,6 +13,7 @@ import type {
   FrankfurterCurrency,
   FrankfurterRate,
 } from "@/services/frankfurter-service";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
 
 type CurrencyNameMap = Map<CurrencyCode, string>;
 type RateChangeMap = Map<
@@ -27,8 +28,9 @@ function getCurrencyName(code: CurrencyCode, currencyNames: CurrencyNameMap) {
   return currencyNames.get(code) ?? code;
 }
 
-function formatDateLabel(date: string) {
-  return new Intl.DateTimeFormat("en-US", {
+function formatDateLabel(date: string, lang = "en") {
+  const locale = lang === "th" ? "th-TH" : "en-US";
+  return new Intl.DateTimeFormat(locale, {
     day: "2-digit",
     month: "short",
   }).format(new Date(`${date}T00:00:00`));
@@ -130,6 +132,8 @@ export function toOverviewMetrics(params: {
   currencies: FrankfurterCurrency[];
   latestRates: FrankfurterRate[];
   rateChanges: RateChangeMap;
+  t: Dictionary;
+  language: string;
 }): OverviewMetric[] {
   const updatedDate = params.latestRates[0]?.date;
   const averageChange =
@@ -148,29 +152,29 @@ export function toOverviewMetrics(params: {
       ),
       icon: "globe",
       id: "base-currency",
-      label: "Base Currency",
+      label: params.t.dashboard.baseCurrencyLabel,
       value: params.baseCurrency,
     },
     {
-      badge: params.latestRates.length ? "Active" : undefined,
-      description: "Live market symbols",
+      badge: params.latestRates.length ? params.t.dashboard.activeBadge : undefined,
+      description: params.t.dashboard.liveMarketSymbols,
       icon: "chart",
       id: "tracked",
-      label: "Total Currencies Tracked",
+      label: params.t.dashboard.currenciesTrackedLabel,
       value: String(params.latestRates.length),
     },
     {
-      description: "Frankfurter v2 market feed",
+      description: params.t.dashboard.marketFeedDesc,
       icon: "clock",
       id: "updated",
-      label: "Last Updated",
-      value: updatedDate ? formatDateLabel(updatedDate) : "No data",
+      label: params.t.dashboard.lastUpdatedLabel,
+      value: updatedDate ? formatDateLabel(updatedDate, params.language) : params.t.dashboard.noData,
     },
     {
-      description: "Average move across tracked pairs",
+      description: params.t.dashboard.averageMoveDesc,
       icon: "trend",
       id: "trend",
-      label: "Market Trend",
+      label: params.t.dashboard.marketTrendLabel,
       trend: toDirection(averageChange),
       value: `${averageChange >= 0 ? "+" : ""}${averageChange.toFixed(2)}%`,
     },
@@ -220,9 +224,9 @@ export function toWatchlistItems(
   });
 }
 
-export function toHistoricalRatePoints(rates: FrankfurterRate[] = []) {
+export function toHistoricalRatePoints(rates: FrankfurterRate[] = [], language = "en") {
   return rates.map<HistoricalRatePoint>((rate) => ({
-    date: formatDateLabel(rate.date),
+    date: formatDateLabel(rate.date, language),
     rate: rate.rate,
   }));
 }

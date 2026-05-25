@@ -4,6 +4,7 @@ import { ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import type { SettingsTab } from "@/lib/adapters/settings";
+import { useTranslations } from "@/lib/i18n/use-translations";
 import { cn } from "@/lib/utils";
 
 type SettingsNavProps = {
@@ -13,6 +14,8 @@ type SettingsNavProps = {
 };
 
 export function SettingsNav({ activeTab, onTabChange, tabs }: SettingsNavProps) {
+  const t = useTranslations();
+
   return (
     <aside className="w-full shrink-0 md:w-64">
       <nav className="flex flex-col gap-1 md:sticky md:top-24">
@@ -31,7 +34,7 @@ export function SettingsNav({ activeTab, onTabChange, tabs }: SettingsNavProps) 
               variant="ghost"
               onClick={() => onTabChange?.(tab.id)}
             >
-              {tab.label}
+              {t.settingsTabs[tab.labelKey]}
               <ChevronRight
                 className={cn(
                   "size-4",

@@ -13,6 +13,7 @@ import {
 import { formatRate } from "@/lib/formatters/currency";
 import { formatPercentage } from "@/lib/formatters/percentage";
 import type { CurrencyPagination } from "@/lib/adapters/currencies";
+import { useTranslations } from "@/lib/i18n/use-translations";
 import type { CurrencyListItem } from "@/lib/types/finance";
 import { cn } from "@/lib/utils";
 
@@ -29,6 +30,7 @@ export function CurrencyTable({
   onPreviousPage,
   pagination,
 }: CurrencyTableProps) {
+  const t = useTranslations();
   const hasPreviousPage = pagination.page > 1;
   const hasNextPage = pagination.to < pagination.total;
 
@@ -38,19 +40,19 @@ export function CurrencyTable({
         <TableHeader>
           <TableRow className="border-[#e0e3e5] bg-[#f7f9fb] hover:bg-[#f7f9fb]">
             <TableHead className="w-24 font-mono text-xs font-medium uppercase tracking-wide text-[#424754]">
-              Code
+              {t.currencies.tableCode}
             </TableHead>
             <TableHead className="font-mono text-xs font-medium uppercase tracking-wide text-[#424754]">
-              Name
+              {t.currencies.tableName}
             </TableHead>
             <TableHead className="w-24 font-mono text-xs font-medium uppercase tracking-wide text-[#424754]">
-              Symbol
+              {t.currencies.tableSymbol}
             </TableHead>
             <TableHead className="text-right font-mono text-xs font-medium uppercase tracking-wide text-[#424754]">
-              Current Rate
+              {t.currencies.tableCurrentRate}
             </TableHead>
             <TableHead className="w-36 text-right font-mono text-xs font-medium uppercase tracking-wide text-[#424754]">
-              24h Change
+              {t.currencies.tableChange24h}
             </TableHead>
           </TableRow>
         </TableHeader>
@@ -80,7 +82,10 @@ export function CurrencyTable({
 
       <div className="flex flex-col gap-3 border-t border-[#e0e3e5] bg-[#f7f9fb] px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-[#424754]">
-          Showing {pagination.from} to {pagination.to} of {pagination.total} results
+          {t.currencies.paginationShowing} {pagination.from}{" "}
+          {t.currencies.paginationTo} {pagination.to}{" "}
+          {t.currencies.paginationOf} {pagination.total}{" "}
+          {t.currencies.paginationResults}
         </p>
         <div className="flex items-center gap-2">
           <Button
@@ -88,10 +93,10 @@ export function CurrencyTable({
             variant="outline"
             onClick={onPreviousPage}
           >
-            Previous
+            {t.currencies.previous}
           </Button>
           <Button disabled={!hasNextPage} variant="outline" onClick={onNextPage}>
-            Next
+            {t.currencies.next}
           </Button>
         </div>
       </div>

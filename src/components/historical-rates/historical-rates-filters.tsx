@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTranslations } from "@/lib/i18n/use-translations";
 import type { CurrencyCode, CurrencyOption } from "@/lib/types/finance";
 
 type HistoricalRatesFiltersProps = {
@@ -31,23 +32,25 @@ export function HistoricalRatesFilters({
   quoteCurrency,
   quoteOptions,
 }: HistoricalRatesFiltersProps) {
+  const t = useTranslations();
+
   return (
     <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
       <CurrencySelect
-        label="Base Currency"
+        label={t.historicalRates.baseCurrencyLabel}
         options={baseOptions}
         value={baseCurrency}
         onValueChange={onBaseCurrencyChange}
       />
       <CurrencySelect
-        label="Quote Currency"
+        label={t.historicalRates.quoteCurrencyLabel}
         options={quoteOptions}
         value={quoteCurrency}
         onValueChange={onQuoteCurrencyChange}
       />
       <label className="block">
         <span className="mb-2 block font-mono text-xs font-medium uppercase tracking-wide text-[#424754]">
-          Date Range
+          {t.historicalRates.dateRangeLabel}
         </span>
         <Input
           className="h-12 border-[#c2c6d6] bg-white shadow-none"

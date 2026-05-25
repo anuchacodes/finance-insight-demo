@@ -14,6 +14,7 @@ import {
 import { formatRate } from "@/lib/formatters/currency";
 import { formatPercentage } from "@/lib/formatters/percentage";
 import type { DailyRateRow } from "@/lib/adapters/historical-rates";
+import { useTranslations } from "@/lib/i18n/use-translations";
 import { cn } from "@/lib/utils";
 
 type DailyRatesTableProps = {
@@ -48,8 +49,14 @@ export function DailyRatesTable({
   quoteCurrency,
   rows,
 }: DailyRatesTableProps) {
+  const t = useTranslations();
+
   function handleExportCsv() {
-    const header = ["Date", "Rate", "Change"];
+    const header = [
+      t.historicalRates.csvDate,
+      t.historicalRates.csvRate,
+      t.historicalRates.csvChange,
+    ];
     const body = rows.map((row) => [
       row.date,
       row.rate.toFixed(6),
@@ -69,7 +76,7 @@ export function DailyRatesTable({
     <section className="overflow-hidden rounded-lg border border-[#c2c6d6] bg-white shadow-[0_1px_3px_rgba(15,23,42,0.05)]">
       <div className="flex flex-col gap-3 border-b border-[#c2c6d6] bg-[#f7f9fb] p-5 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-2xl font-semibold tracking-tight text-[#191c1e]">
-          Daily Data
+          {t.historicalRates.dailyDataTitle}
         </h2>
         <Button
           className="gap-2 text-[#0058be]"
@@ -78,19 +85,23 @@ export function DailyRatesTable({
           onClick={handleExportCsv}
         >
           <Download className="size-4" />
-          Export CSV
+          {t.historicalRates.exportCsv}
         </Button>
       </div>
 
       <Table className="min-w-[780px]">
         <TableHeader>
           <TableRow className="border-[#c2c6d6] bg-[#f2f4f6] hover:bg-[#f2f4f6]">
-            {["Date", "Rate", "Change"].map((label) => (
+            {[
+              t.historicalRates.tableDate,
+              t.historicalRates.tableRate,
+              t.historicalRates.tableChange,
+            ].map((label) => (
               <TableHead
                 key={label}
                 className={cn(
                   "font-mono text-xs font-medium uppercase tracking-wide text-[#424754]",
-                  label !== "Date" && "text-right",
+                  label !== t.historicalRates.tableDate && "text-right",
                 )}
               >
                 {label}

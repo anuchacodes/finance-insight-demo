@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { CurrencySortKey } from "@/lib/adapters/currencies";
+import { useTranslations } from "@/lib/i18n/use-translations";
 import type { CurrencyCode, CurrencyOption } from "@/lib/types/finance";
 
 type CurrencyFilterProps = {
@@ -33,14 +34,16 @@ export function CurrencyFilter({
   search,
   sortKey,
 }: CurrencyFilterProps) {
+  const t = useTranslations();
+
   return (
     <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <label className="relative w-full sm:max-w-sm">
         <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#727785]" />
-        <span className="sr-only">Search currencies</span>
+        <span className="sr-only">{t.currencies.searchLabel}</span>
         <Input
           className="h-11 border-[#c2c6d6] bg-white pl-9 shadow-none"
-          placeholder="Search currencies..."
+          placeholder={t.currencies.searchPlaceholder}
           type="search"
           value={search}
           onChange={(event) => onSearchChange(event.target.value)}
@@ -67,7 +70,7 @@ export function CurrencyFilter({
           onClick={onSortChange}
         >
           <SlidersHorizontal className="size-4" />
-          Sort: {sortKey}
+          {t.currencies.sortLabel}: {t.currencies.sortOptions[sortKey]}
         </Button>
       </div>
     </div>
