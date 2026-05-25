@@ -7,11 +7,13 @@ import { useState } from "react";
 
 import { dashboardNavigation } from "@/components/layouts/navigation";
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "@/lib/i18n/use-translations";
 import { saveAppSettings, useAppSettings } from "@/lib/settings/app-settings";
 import { cn } from "@/lib/utils";
 
 export function Topbar() {
   const appSettings = useAppSettings();
+  const t = useTranslations();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const isDarkMode = appSettings.themeMode === "dark";
@@ -28,7 +30,7 @@ export function Topbar() {
     <>
       <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-[#c2c6d6] bg-[#f7f9fb]/95 px-4 backdrop-blur md:gap-4 md:px-8">
         <Button
-          aria-label="Open navigation menu"
+          aria-label={t.layout.openNavigation}
           className="md:hidden"
           size="icon"
           variant="ghost"
@@ -39,13 +41,13 @@ export function Topbar() {
 
         <div className="min-w-0 flex-1">
           <p className="truncate text-lg font-bold text-[#0058be] md:text-xl">
-            Finance Insight Demo
+            {t.layout.appName}
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <Button
-            aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+            aria-label={isDarkMode ? t.layout.switchToLight : t.layout.switchToDark}
             size="icon"
             variant="ghost"
             onClick={handleThemeToggle}
@@ -58,7 +60,7 @@ export function Topbar() {
       {isMobileMenuOpen ? (
         <div className="fixed inset-0 z-50 md:hidden">
           <button
-            aria-label="Close navigation menu"
+            aria-label={t.layout.closeNavigation}
             className="absolute inset-0 bg-[#191c1e]/45"
             type="button"
             onClick={() => setIsMobileMenuOpen(false)}
@@ -71,12 +73,14 @@ export function Topbar() {
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <p className="truncate text-2xl font-bold tracking-tight text-white">
-                  Finance Insight
+                  {t.layout.brandName}
                 </p>
-                <p className="mt-1 text-sm text-[#bec6e0]">SaaS Analytics</p>
+                <p className="mt-1 text-sm text-[#bec6e0]">
+                  {t.layout.navigationSubtitle}
+                </p>
               </Link>
               <Button
-                aria-label="Close navigation menu"
+                aria-label={t.layout.closeNavigation}
                 className="shrink-0 text-[#eff1f3] hover:bg-[#3f465c] hover:text-white"
                 size="icon"
                 variant="ghost"
@@ -102,7 +106,7 @@ export function Topbar() {
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <Icon className="size-5 shrink-0" />
-                    <span>{item.label}</span>
+                    <span>{t.navigation[item.labelKey]}</span>
                   </Link>
                 );
               })}

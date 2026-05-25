@@ -16,6 +16,7 @@ import { Minus, TrendingDown, TrendingUp } from "lucide-react";
 import { formatRate } from "@/lib/formatters/currency";
 import { formatPercentage } from "@/lib/formatters/percentage";
 import type { HistoricalChartPoint } from "@/lib/adapters/historical-rates";
+import { useTranslations } from "@/lib/i18n/use-translations";
 import { cn } from "@/lib/utils";
 
 type HistoricalRateChartCardProps = {
@@ -37,6 +38,7 @@ export function HistoricalRateChartCard({
   chartData,
   quoteCurrency,
 }: HistoricalRateChartCardProps) {
+  const t = useTranslations();
   const first = chartData[0]?.rate ?? 0;
   const latest = chartData.at(-1)?.rate ?? first;
   const change = first ? ((latest - first) / first) * 100 : 0;
@@ -60,7 +62,8 @@ export function HistoricalRateChartCard({
     <section className="rounded-lg border border-[#c2c6d6] bg-white p-5 shadow-[0_1px_3px_rgba(15,23,42,0.05)]">
       <div className="mb-6 flex items-center justify-between gap-4">
         <h2 className="text-2xl font-semibold tracking-tight text-[#191c1e]">
-          {baseCurrency} to {quoteCurrency} Rate
+          {baseCurrency} {t.historicalRates.chartTitleConnector} {quoteCurrency}{" "}
+          {t.historicalRates.tableRate}
         </h2>
         <span
           className={cn(
@@ -88,6 +91,8 @@ type HistoricalAreaChartProps = {
 };
 
 function HistoricalAreaChart({ data, domain }: HistoricalAreaChartProps) {
+  const t = useTranslations();
+
   return (
     <ResponsiveContainer height="100%" minWidth={0} width="100%">
       <AreaChart data={data} margin={{ bottom: 8, left: 0, right: 12, top: 8 }}>
@@ -122,7 +127,10 @@ function HistoricalAreaChart({ data, domain }: HistoricalAreaChartProps) {
             borderRadius: "8px",
             boxShadow: "0 10px 15px -3px rgba(15, 23, 42, 0.1)",
           }}
-          formatter={(value) => [formatRate(Number(value), 3), "Rate"]}
+          formatter={(value) => [
+            formatRate(Number(value), 3),
+            t.historicalRates.tooltipRateLabel,
+          ]}
         />
         <Area
           activeDot={{ fill: "#0058be", r: 5, stroke: "#ffffff", strokeWidth: 2 }}

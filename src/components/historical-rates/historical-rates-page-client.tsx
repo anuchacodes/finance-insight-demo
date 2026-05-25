@@ -19,14 +19,18 @@ import {
   toHistoricalCurrencyOptions,
   type HistoricalAnalysisRange,
 } from "@/lib/adapters/historical-rates";
+import { useTranslations } from "@/lib/i18n/use-translations";
 import { useCurrencies } from "@/lib/query/hooks/use-currencies";
 import { useHistoricalRates } from "@/lib/query/hooks/use-historical-rates";
+import { useAppSettings } from "@/lib/settings/app-settings";
 import type { CurrencyCode } from "@/lib/types/finance";
 
 const defaultBaseCurrency: CurrencyCode = "USD";
 const defaultQuoteCurrency: CurrencyCode = "EUR";
 
 export function HistoricalRatesPageClient() {
+  const appSettings = useAppSettings();
+  const t = useTranslations();
   const [selectedRange, setSelectedRange] =
     useState<HistoricalAnalysisRange>("30D");
   const [baseCurrency, setBaseCurrency] =
@@ -55,8 +59,8 @@ export function HistoricalRatesPageClient() {
   });
 
   const chartData = useMemo(
-    () => toHistoricalChartPoints(historicalRatesQuery.data),
-    [historicalRatesQuery.data],
+    () => toHistoricalChartPoints(historicalRatesQuery.data, appSettings.language),
+    [appSettings.language, historicalRatesQuery.data],
   );
   const dailyRows = useMemo(
     () => toDailyRateRows(historicalRatesQuery.data),
@@ -97,10 +101,10 @@ export function HistoricalRatesPageClient() {
       <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="text-4xl font-bold tracking-tight text-[#191c1e] md:text-5xl">
-            Historical Analysis
+            {t.historicalRates.pageTitle}
           </h1>
           <p className="mt-3 text-lg text-[#424754]">
-            Track performance trends over selected intervals.
+            {t.historicalRates.pageDescription}
           </p>
         </div>
         <RangeToggle
@@ -128,9 +132,9 @@ export function HistoricalRatesPageClient() {
           description={
             error instanceof Error
               ? error.message
-              : "The historical rate feed could not be loaded."
+              : t.historicalRates.errorDescription
           }
-          title="Unable to load historical rates"
+          title={t.historicalRates.errorTitle}
           onRetry={() => {
             void currenciesQuery.refetch();
             void historicalRatesQuery.refetch();
@@ -140,8 +144,8 @@ export function HistoricalRatesPageClient() {
 
       {isEmpty ? (
         <EmptyState
-          description="Try another currency pair or start date."
-          title="No historical rates found"
+          description={t.historicalRates.emptyDescription}
+          title={t.historicalRates.emptyTitle}
         />
       ) : null}
 

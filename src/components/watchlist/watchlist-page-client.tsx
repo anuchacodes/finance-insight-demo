@@ -21,6 +21,7 @@ import {
   toWatchlistPairs,
   toWatchlistQuoteOptions,
 } from "@/lib/adapters/watchlist";
+import { useTranslations } from "@/lib/i18n/use-translations";
 import { useCurrencies } from "@/lib/query/hooks/use-currencies";
 import { useLatestRates } from "@/lib/query/hooks/use-exchange-rates";
 import { useHistoricalRates } from "@/lib/query/hooks/use-historical-rates";
@@ -32,6 +33,7 @@ import {
 } from "@/lib/watchlist/watchlist-store";
 
 export function WatchlistPageClient() {
+  const t = useTranslations();
   const [selectedQuoteOverride, setSelectedQuoteOverride] =
     useState<CurrencyCode>("");
   const watchlistQuotes = useWatchlistQuotes();
@@ -121,10 +123,10 @@ export function WatchlistPageClient() {
       <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-4xl font-bold tracking-tight text-[#191c1e] md:text-5xl">
-            My Watchlist
+            {t.watchlist.pageTitle}
           </h1>
           <p className="mt-3 text-lg text-[#424754]">
-            Monitor your pinned currency pairs and spot trends.
+            {t.watchlist.pageDescription}
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:min-w-[320px] sm:flex-row">
@@ -134,7 +136,7 @@ export function WatchlistPageClient() {
             disabled={!addableQuoteOptions.length}
           >
             <SelectTrigger className="h-11 border-[#c2c6d6] bg-white shadow-none sm:flex-1">
-              <SelectValue placeholder="Select quote" />
+              <SelectValue placeholder={t.watchlist.selectQuotePlaceholder} />
             </SelectTrigger>
             <SelectContent>
               {addableQuoteOptions.map((option) => (
@@ -150,7 +152,7 @@ export function WatchlistPageClient() {
             onClick={handleAddPair}
           >
             <Plus className="size-4" />
-            Add Pair
+            {t.watchlist.addPairButton}
           </Button>
         </div>
       </header>
@@ -162,9 +164,9 @@ export function WatchlistPageClient() {
           description={
             error instanceof Error
               ? error.message
-              : "The watchlist feed could not be loaded."
+              : t.watchlist.errorDescription
           }
-          title="Unable to load watchlist"
+          title={t.watchlist.errorTitle}
           onRetry={() => {
             void currenciesQuery.refetch();
             void latestRatesQuery.refetch();
@@ -175,8 +177,8 @@ export function WatchlistPageClient() {
 
       {isEmpty ? (
         <EmptyState
-          description="Add a currency pair to start monitoring rates."
-          title="No watchlist pairs"
+          description={t.watchlist.emptyDescription}
+          title={t.watchlist.emptyTitle}
         />
       ) : null}
 

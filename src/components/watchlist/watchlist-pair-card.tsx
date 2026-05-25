@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { formatRate } from "@/lib/formatters/currency";
 import { formatPercentage } from "@/lib/formatters/percentage";
 import type { WatchlistPair } from "@/lib/adapters/watchlist";
+import { useTranslations } from "@/lib/i18n/use-translations";
 import { cn } from "@/lib/utils";
 
 type WatchlistPairCardProps = {
@@ -13,13 +14,14 @@ type WatchlistPairCardProps = {
 };
 
 export function WatchlistPairCard({ onRemove, pair }: WatchlistPairCardProps) {
+  const t = useTranslations();
   const isDown = pair.direction === "down";
   const TrendIcon = isDown ? TrendingDown : TrendingUp;
 
   return (
     <article className="relative flex min-h-[300px] flex-col rounded-lg border border-[#c2c6d6] bg-white p-5 shadow-[0_1px_3px_rgba(15,23,42,0.05)]">
       <Button
-        aria-label={`Remove ${pair.pair} from watchlist`}
+        aria-label={`${t.watchlist.removePairAria}: ${pair.pair}`}
         className="absolute right-4 top-4 text-[#0058be] hover:text-[#727785]"
         size="icon-sm"
         variant="ghost"

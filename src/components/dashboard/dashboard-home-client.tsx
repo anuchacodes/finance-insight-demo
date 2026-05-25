@@ -39,6 +39,7 @@ import {
   getRefreshIntervalMs,
   useAppSettings,
 } from "@/lib/settings/app-settings";
+import { useTranslations } from "@/lib/i18n/use-translations";
 import type {
   CurrencyCode,
   CurrencyOption,
@@ -58,6 +59,7 @@ const dashboardQuoteUniverse: CurrencyCode[] = [
 ];
 
 export function DashboardHomeClient() {
+  const t = useTranslations();
   const appSettings = useAppSettings();
   const watchlistQuotes = useWatchlistQuotes();
   const refreshInterval = getRefreshIntervalMs(appSettings);
@@ -197,8 +199,8 @@ export function DashboardHomeClient() {
             description:
               error instanceof Error
                 ? error.message
-                : "The market feed could not be loaded.",
-            title: "Unable to load dashboard data",
+                : t.dashboard.errorDescription,
+            title: t.dashboard.errorTitle,
           }
         : undefined,
     );
@@ -206,13 +208,12 @@ export function DashboardHomeClient() {
       "dashboard",
       isEmpty
         ? {
-            description:
-              "Frankfurter did not return exchange rates for the current dashboard base.",
-            title: "No dashboard data",
+            description: t.dashboard.emptyDescription,
+            title: t.dashboard.emptyTitle,
           }
         : undefined,
     );
-  }, [error, isEmpty, isLoading, setEmpty, setError, setLoading]);
+  }, [error, isEmpty, isLoading, setEmpty, setError, setLoading, t]);
 
   const handleBaseCurrencyChange = useCallback((nextBase: CurrencyCode) => {
     setBaseCurrencyOverride(nextBase);
@@ -269,6 +270,8 @@ export function DashboardHomeClient() {
     currencies: currenciesQuery.data ?? [],
     latestRates,
     rateChanges,
+    t,
+    language: appSettings.language,
   });
   const historicalRates = toHistoricalRatePoints(
     historicalRatesQuery.data?.length
@@ -276,6 +279,7 @@ export function DashboardHomeClient() {
       : selectedPairRate
         ? [selectedPairRate]
         : [],
+    appSettings.language,
   );
   const exchangeRates = toExchangeRates(latestRates, currencyNames, rateChanges);
   const watchlistItems = toWatchlistItems(
@@ -323,7 +327,7 @@ export function DashboardHomeClient() {
         </div>
       </div>
 
-      <ExchangeRateTable rates={exchangeRates} />
+      <ExchangeRateTable rates={exchangeRates} baseCurrency={baseCurrency} />
     </div>
   );
 }
@@ -339,12 +343,13 @@ function DashboardControls({
   currencyOptions,
   onBaseCurrencyChange,
 }: DashboardControlsProps) {
+  const t = useTranslations();
   return (
     <section className="flex flex-col gap-3 rounded-lg border border-[#e0e3e5] bg-white p-4 shadow-[0_1px_3px_rgba(15,23,42,0.05)] sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <p className="text-sm font-semibold text-[#191c1e]">Dashboard base</p>
+        <p className="text-sm font-semibold text-[#191c1e]">{t.dashboard.dashboardBaseTitle}</p>
         <p className="text-sm text-[#424754]">
-          Rates, trends, chart, and converter defaults follow this currency.
+          {t.dashboard.dashboardBaseDesc}
         </p>
       </div>
       <Select value={baseCurrency} onValueChange={onBaseCurrencyChange}>

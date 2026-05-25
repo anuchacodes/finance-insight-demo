@@ -12,6 +12,10 @@ function readThemeMode(): ThemeMode {
   return loadAppSettings().themeMode;
 }
 
+function readLanguage() {
+  return loadAppSettings().language;
+}
+
 function applyTheme(themeMode: ThemeMode) {
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
   const shouldUseDark = themeMode === "dark" || (themeMode === "system" && prefersDark);
@@ -20,18 +24,25 @@ function applyTheme(themeMode: ThemeMode) {
   document.documentElement.style.colorScheme = shouldUseDark ? "dark" : "light";
 }
 
+function applyLanguage(language: string) {
+  document.documentElement.lang = language;
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const syncTheme = () => applyTheme(readThemeMode());
+    const syncSettings = () => {
+      applyTheme(readThemeMode());
+      applyLanguage(readLanguage());
+    };
 
-    syncTheme();
-    window.addEventListener(settingsChangeEvent, syncTheme);
-    mediaQuery.addEventListener("change", syncTheme);
+    syncSettings();
+    window.addEventListener(settingsChangeEvent, syncSettings);
+    mediaQuery.addEventListener("change", syncSettings);
 
     return () => {
-      window.removeEventListener(settingsChangeEvent, syncTheme);
-      mediaQuery.removeEventListener("change", syncTheme);
+      window.removeEventListener(settingsChangeEvent, syncSettings);
+      mediaQuery.removeEventListener("change", syncSettings);
     };
   }, []);
 

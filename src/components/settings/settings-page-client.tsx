@@ -9,17 +9,21 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   normalizeSettings,
+  languageOptions,
   refreshIntervalOptions,
   settingsTabs,
   toSettingsCurrencyOptions,
   type AppSettings,
+  type Language,
   type ThemeMode,
 } from "@/lib/adapters/settings";
+import { useTranslations } from "@/lib/i18n/use-translations";
 import { useCurrencies } from "@/lib/query/hooks/use-currencies";
 import { loadAppSettings, saveAppSettings } from "@/lib/settings/app-settings";
 import type { CurrencyCode } from "@/lib/types/finance";
 
 export function SettingsPageClient() {
+  const t = useTranslations();
   const [savedSettings, setSavedSettings] = useState<AppSettings>(() =>
     loadAppSettings(),
   );
@@ -65,10 +69,10 @@ export function SettingsPageClient() {
     <div className="mx-auto flex max-w-6xl flex-col gap-8">
       <header>
         <h1 className="text-4xl font-bold tracking-tight text-[#191c1e] md:text-5xl">
-          Settings
+          {t.settings.pageTitle}
         </h1>
         <p className="mt-3 text-lg text-[#424754]">
-          Manage your account preferences and system configurations.
+          {t.settings.pageDescription}
         </p>
       </header>
 
@@ -81,6 +85,7 @@ export function SettingsPageClient() {
           ) : (
             <GeneralSettingsCard
               currencyOptions={currencyOptions}
+              languageOptions={languageOptions}
               refreshOptions={refreshIntervalOptions}
               settings={normalizedSettings}
               onBaseCurrencyChange={(baseCurrency: CurrencyCode) =>
@@ -88,6 +93,9 @@ export function SettingsPageClient() {
               }
               onRefreshIntervalChange={(refreshInterval) =>
                 updateSettings({ refreshInterval })
+              }
+              onLanguageChange={(language: Language) =>
+                updateSettings({ language })
               }
               onThemeModeChange={(themeMode: ThemeMode) =>
                 updateSettings({ themeMode })
@@ -100,9 +108,9 @@ export function SettingsPageClient() {
               description={
                 currenciesQuery.error instanceof Error
                   ? currenciesQuery.error.message
-                  : "Currency preferences could not be loaded."
+                  : t.settings.unableToLoadCurrenciesDescription
               }
-              title="Unable to load currency options"
+              title={t.settings.unableToLoadCurrencies}
               onRetry={() => {
                 void currenciesQuery.refetch();
               }}
@@ -111,14 +119,16 @@ export function SettingsPageClient() {
 
           <div className="flex items-center justify-end gap-3">
             {isSaved ? (
-              <p className="text-sm font-medium text-[#00855b]">Saved</p>
+              <p className="text-sm font-medium text-[#00855b]">
+                {t.common.saved}
+              </p>
             ) : null}
             <Button
               className="h-12 px-6"
               disabled={currenciesQuery.isLoading || !hasChanges}
               onClick={handleSave}
             >
-              Save Changes
+              {t.common.saveChanges}
             </Button>
           </div>
         </div>
@@ -135,7 +145,7 @@ function SettingsSkeleton() {
         <Skeleton className="mt-2 h-4 w-72 max-w-full" />
       </div>
       <div className="flex flex-col gap-5 p-5">
-        {Array.from({ length: 3 }).map((_, index) => (
+        {Array.from({ length: 4 }).map((_, index) => (
           <div
             key={index}
             className="flex flex-col gap-4 border-b border-[#e0e3e5] pb-5 last:border-b-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between"

@@ -9,6 +9,7 @@ import {
   CurrencyTable,
   CurrencyTableSkeleton,
 } from "@/components/currencies/currency-table";
+import { useTranslations } from "@/lib/i18n/use-translations";
 import {
   filterCurrencyItems,
   getCurrencyPagination,
@@ -30,6 +31,7 @@ const pageSize = 10;
 const sortSequence: CurrencySortKey[] = ["code", "name", "rate", "change"];
 
 export function CurrenciesPageClient() {
+  const t = useTranslations();
   const [baseCurrency, setBaseCurrency] =
     useState<CurrencyCode>(defaultBaseCurrency);
   const [page, setPage] = useState(1);
@@ -115,7 +117,7 @@ export function CurrenciesPageClient() {
     <div className="mx-auto flex max-w-7xl flex-col gap-6">
       <div className="flex flex-col gap-4">
         <h1 className="text-3xl font-bold tracking-tight text-[#191c1e]">
-          All Currencies
+          {t.currencies.pageTitle}
         </h1>
         <CurrencyFilter
           baseCurrency={baseCurrency}
@@ -135,9 +137,9 @@ export function CurrenciesPageClient() {
           description={
             error instanceof Error
               ? error.message
-              : "The currency list could not be loaded."
+              : t.currencies.errorDescription
           }
-          title="Unable to load currencies"
+          title={t.currencies.errorTitle}
           onRetry={() => {
             void currenciesQuery.refetch();
             void latestRatesQuery.refetch();
@@ -148,8 +150,8 @@ export function CurrenciesPageClient() {
 
       {isEmpty ? (
         <EmptyState
-          description="Try another search term or base currency."
-          title="No currencies found"
+          description={t.currencies.emptyDescription}
+          title={t.currencies.emptyTitle}
         />
       ) : null}
 
